@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+              android:gravity="top|center">
+
+    <Button
+        android:id="@+id/AddCellIOButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="AddIOCell"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:text="@string/addbtn_txt2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragLabel"
+        android:text="@string/IOLabel"/>
+
+    <ScrollView
+        android:id="@+id/ScrollViewIOCell"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutIOCell"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Dynamically insert cell_layout copies here-->
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+</LinearLayout>
+

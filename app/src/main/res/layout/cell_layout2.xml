@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:gravity="top">
+
+    <TextView
+        android:id="@+id/cellIOLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txtlbl_00"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:background="#FFFF"
+        android:textColor="#F0B3"/>
+    <!-- TODO get background color materials-->
+
+
+    <EditText
+        android:id="@+id/cellIOData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxEms="4"
+        android:hint="@string/IOLabel"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:maxLength="3"
+        android:textAlignment="center"
+        />
+
+</LinearLayout>

@@ -1,0 +1,217 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        android:id="@+id/GridCPU">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1"
+            >
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_weight=".5"
+                >
+
+                <TextView
+                    android:id="@+id/CPU_txtViewAC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtlbl_ac"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="1dp"/>
+
+                <EditText
+                    android:id="@+id/CPU_editTx_AC_carry"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textIsSelectable="true"
+                    android:ems="10"
+                    android:maxEms="4"
+                    android:maxLength="1"
+                    android:minEms="3"
+                    />
+
+                <EditText
+                    android:id="@+id/CPU_editTx_AC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textIsSelectable="true"
+                    android:ems="10"
+                    android:maxEms="4"
+                    android:minEms="3"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="end"
+                android:layout_weight=".5"
+                >
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="HELP"
+                    android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                    android:id="@+id/OptionsButton"
+                    />
+
+                <Button
+                    android:id="@+id/buttonClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtlbl_clear"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="fill_horizontal"
+            android:baselineAligned="false"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/CPU_txtViewIR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtlbl_ir"
+                    android:paddingEnd="2dp"
+                    android:paddingStart="2dp"
+                    />
+
+                <EditText
+                    android:id="@+id/CPU_editTx_IR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textIsSelectable="true"
+                    android:ems="10"
+                    android:maxEms="4"
+                    android:maxLength="3"
+                    android:minEms="3"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_weight=".5"
+                >
+
+                <Button
+                    android:id="@+id/buttonStep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtlbl_step"/>
+
+                <Button
+                    android:id="@+id/buttonRun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtlbl_run"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum=".3">
+
+            <TextView
+                android:id="@+id/CPU_txtViewPC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtlbl_pc"
+                android:paddingEnd="0dp"
+                android:paddingStart="1dp"/>
+
+            <EditText
+                android:id="@+id/CPU_editTx_PC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:selectAllOnFocus="true"
+                android:maxEms="4"
+                android:maxLength="3"
+                android:minEms="3"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/GridCPU"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <fragment
+            android:id="@+id/listView_MemCells"
+            android:name="com.example.dan.simplecomputer.MemoryCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/frag_cell_list"
+            android:tag="memory"
+            android:layout_weight="1"/>
+
+        <fragment
+            android:id="@+id/listView_InputCard"
+            android:name="com.example.dan.simplecomputer.MemoryCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/frag_cell_list2"
+            android:tag="input"
+            android:layout_weight="1"/>
+
+        <fragment
+            android:id="@+id/listView_OutputCard"
+            android:name="com.example.dan.simplecomputer.MemoryCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout ="@layout/frag_cell_list2"
+            android:tag="output"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+              android:gravity="center">
+
+    <Button
+        android:id="@+id/AddCellButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="AddMemCell"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:text="@string/addbtn_txt1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragLabel"
+        android:text="@string/memLabel"
+        />
+
+    <ScrollView
+        android:id="@+id/ScrollViewMemCell"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutMemCell"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+<!--todo Turn into ListView and use ListAdapter for scroll useage?-->
+            <!-- Dynamically insert cell_layout copies here-->
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+</LinearLayout>
+
