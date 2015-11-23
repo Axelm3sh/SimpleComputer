@@ -268,20 +268,19 @@ public class MemoryCell extends Fragment
                 AddCell(scroll,inflaterInner);
             }
 
+            //At this point both arrayData and Data being passed in should be same size
             int i = 0;
             while (i < Data.size()) {
 
-
                 //Change what data is changed, skip unchanged data. Gives less calls to ChangeCells
-                if(!arrayData.get(i).getCellData().equals(Data.get(i).getCellData())) {
+                if(arrayData.get(i).getCellData().equals(Data.get(i).getCellData())) {
                     //Data[] -> .get(location) -> returns DataObj in array -> calls getCellData
                     ChangeCell(i, Data.get(i).getCellData());
                 }
 
-                i++;
+                i++;//Go to next cell to update
             }
 
-            //todo probably handle when arrayData is bigger than Data...Shouldn't be.
         }
 
     }
@@ -297,7 +296,7 @@ public class MemoryCell extends Fragment
 
         for (int i = 0; i < arrayData.size(); i++) {
             arrayData.set(i, new CellData());
-            //Just make every value default to 0 so we still have our slots
+            //Just make every value default to 0 so we still have our slots to work with
         }
 
         resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
@@ -308,29 +307,23 @@ public class MemoryCell extends Fragment
     public void ChangeCell(int location, String data)
     {
         LinearLayout linearLayout = this.scroll;
-        if (DEBUG) Log.d(VERBOSE, String.format("ChangeCell[Layout Children count] %s", String.valueOf(linearLayout.getChildCount())));
 
-        if (linearLayout.getChildAt(location) instanceof LinearLayout)
+        if (DEBUG) Log.d(VERBOSE, String.format("ChangeCell[Layout Children count] %s",
+                String.valueOf(linearLayout.getChildCount())));
+
         //Check if its an LinearLayout cell_layout at this index location corresponding to cell number
+        if (linearLayout.getChildAt(location) instanceof LinearLayout)
         {
-            if (DEBUG) Log.d(VERBOSE, "Inside <instanceOf> Edittext");
-
             LinearLayout localLayout = (LinearLayout) linearLayout.getChildAt(location);
-
-            if (DEBUG) Log.d(VERBOSE, String.format("This localLayout.child is %s," +
-                            " with the Children inside at index 1 being %s",
-                    localLayout, localLayout.getChildAt(1)));
 
             if (localLayout.getChildAt(1) instanceof EditText) //should be child edittext
             {
-                if (DEBUG) Log.d(VERBOSE, String.format("Inside instanceOf <Child> Edittext\n" +
-                        "Data to be passed into Child is %s", data));
-
                 EditText text = (EditText) localLayout.getChildAt(1);
                 text.setText(data);
                 text.getParent().requestChildFocus(text, text);
-            }
-        }
+            }//LL Child
+
+        }//LL
 
     }
 
@@ -367,18 +360,18 @@ public class MemoryCell extends Fragment
                     if (arrayData.get(holding) == null) {
                         //holding is cell label number, insert at cell label code
                         arrayData.add(holding, instanceS);
+
                         if (DEBUG) Log.d(VERBOSE, "Holding cell is empty, adding instance to blank");
                     } else {
                         if (DEBUG) Log.d(VERBOSE, "Removing " + arrayData.get(holding));
-                        arrayData.remove(holding);
 
-                        //adding new data to holding index
-                        arrayData.add(holding, instanceS);
-                        if(DEBUG) Log.d(VERBOSE, "Holding cell is occupied, adding instance");
+                        //overwriting/setting cell at holding number to instance
+                        arrayData.set(holding, instanceS);
+
+                        if(DEBUG) Log.d(VERBOSE, "Holding cell is occupied, rewriting instance");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    if(DEBUG) popToastS("ERR: GetItemChange index@: " + textView.getText() + " AR-Size: " + arrayData.size());
                 }
 
             }
@@ -420,7 +413,7 @@ public class MemoryCell extends Fragment
     private void popToastL(String text)
     {
         Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP, 0, -120);
+        toast.setGravity(Gravity.BOTTOM, 0, 70);
         toast.show();
     } //popToastL - long
 

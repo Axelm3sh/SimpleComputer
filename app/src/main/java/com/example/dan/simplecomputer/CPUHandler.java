@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Dan on 10/15/2015.
+ * CPU Emulator
+ * The core of the processing unit of emulator
  */
 public class CPUHandler extends Activity
 {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
     private List<CellData> cellDataList; //Array for memory cell data
@@ -23,7 +24,7 @@ public class CPUHandler extends Activity
     private List<CellData> cellOutputList; //Array for memory cell Outputs
 
 
-    private int Accumulator, AccumulatorCarry, InstructionRegister, ProgramCounter;
+    private int Accumulator, AccumulatorCarry, InstructionRegister, ProgramCounter, InputIndex;
 
     /* -1 - unexpected error, 1 - No more input cards, 2 - instruction card empty, 3 - infinite loop*/
     boolean ErrorEncountered = false;
@@ -40,6 +41,7 @@ public class CPUHandler extends Activity
         this.AccumulatorCarry = 0;
         this.Accumulator = 0;
         this.InstructionRegister = 0;
+        this.InputIndex = 0;
         this.cellDataList = new ArrayList<>(); //Empty Mem List, will be overwritten by later func
         this.cellInputList = new ArrayList<>();//Empty Input list, will be overwritten by later func
         this.cellOutputList = new ArrayList<>(); //Output cells don't have to be instanced.
@@ -53,13 +55,14 @@ public class CPUHandler extends Activity
         setAccumulatorCarry(0);
         setInstructionRegister(0);
         setProgramCounter(0);
-
+        InputIndex = 0;
     }
 
     public boolean CheckError()
     {
         if (ErrorEncountered) {
             this.ErrStr = ErrorCode(ErrFlagCode);
+            InputIndex = 0; //Reset input cards if we encounter any stop
         }
         return ErrorEncountered;
     }
@@ -74,7 +77,7 @@ public class CPUHandler extends Activity
             case 0:
                 return "No Error, Program Terminated Normally";
             case 1:
-                return "Error: No more Input Cards!";
+                return "Error: No Input Card!";
             case 2:
                 return "Error: Expected Instruction in Memory!";
             case 3:
@@ -197,33 +200,67 @@ public class CPUHandler extends Activity
     //Note to self, watch out when you copy and paste too much...
 
     //Load the data into list using maxCellsGenerated as number of cells.
-    public void LoadMemoryArray(List<CellData> cellDatas)
+    public void LoadMemoryArray(List<CellData> passingData)
     {
 
-        cellDataList = cellDatas;
+        //if cellDataList is empty or passingData larger size
+        if (cellDataList.isEmpty() || TestArrayInequality(passingData, cellDataList) == 1) {
+            int count;
+            if (cellDataList.isEmpty()) {
+                count = 0;
+            }
+            else {
+                //large number - smaller num = difference in cells we need to make
+                count = passingData.size() - cellDataList.size();
+            }
+
+            for (int i = count; i < passingData.size(); i++) {
+                CellData instance = new CellData();
+                cellDataList.add(instance);     //instance our slots to work and write in
+            }
+
+            //At this point cellDataList is same size as our passingData Array, start copying
+            for (int i = 0; i < cellDataList.size(); i++) {
+                cellDataList.set(i, passingData.get(i));
+            }
+        }
+
+        /*At this point, cellData should be an exact copy of whatever data we have on the GUI
+        * We can now perform operations that change the current cellDataList
+        * If we call getCellDataList, it will return this array.*/
 
         if (DEBUG) Log.d("DDP", "Successful list Add <Memory>");
     }
 
     //Load the data into list using maxCellsGenerated as number of cells.
-    //NOTE: Algorithm uses reverse stack
-    // (ie: input 00 will be at last index xx, input xx will be at index 00)
-    //Later functions will remove first data when done and shift whole stack up keeping current
-    //data at first input slot to read.
-    public void LoadInputArray(List<CellData> cellDatas)
+    public void LoadInputArray(List<CellData> passingData)
     {
 
-        //If cellDataList is not empty, we start to clear it and prep for new data to be loaded
-        if (cellInputList.isEmpty()) {
-            cellInputList = new ArrayList<>(99);
+        //if cellDataList is empty or passingData larger size
+        if (cellInputList.isEmpty() || TestArrayInequality(passingData, cellInputList) == 1) {
+            int count;
+            if (cellInputList.isEmpty()) {
+                count = 0;
+            }
+            else {
+                //large number - smaller num = difference in cells we need to make
+                count = passingData.size() - cellInputList.size();
+            }
+
+            for (int i = count; i < passingData.size(); i++) {
+                CellData instance = new CellData();
+                cellInputList.add(instance);     //instance our slots to work and write in
+            }
+
+            //At this point cellDataList is same size as our passingData Array, start copying
+            for (int i = 0; i < cellInputList.size(); i++) {
+                cellInputList.set(i, passingData.get(i));
+            }
         }
 
-        //From max.size-1
-        for (int i = cellDatas.size() - 1; i >= 0; i--) {
-            CellData overwriteCell = cellDatas.get(i);
-
-            cellInputList.add(overwriteCell);
-        }
+        /*At this point, cellData should be an exact copy of whatever data we have on the GUI
+        * We can now perform operations that change the current cellInputList
+        * If we call getcellInputList, it will return this array.*/
         if (DEBUG) Log.d("DDP", "Successful list Add <Input>");
 
     }
@@ -317,29 +354,51 @@ public class CPUHandler extends Activity
     //method - location @index of: data
     private void GetInputFromCell(int location)
     {
-
         //Reverse stack. Last card is first input
-        CellData overwriteCell = null;
+        CellData overwriteCell;
 
-        //Check Inputlist if it's not empty
-        if (cellInputList.size() != 0) {
-            overwriteCell = cellInputList.get(cellInputList.size() - 1);
-            //Set new data to memory cell at location
-            //First check to see if location is greater than our cells that we currently have
-            if (cellDataList.size() > location) {
-                cellDataList.set(location, overwriteCell);
-            }
-            else //Instantiate empty cells till we reach our location
-            {
-                for (int i = cellDataList.size() - 1; i < location; i++) {
-                    cellDataList.add(new CellData());
-                }
-                cellDataList.set(location, overwriteCell); //now we can add it.
+        //cellDataList max size = true index num + 1, location references a true index num.
+        if(cellDataList.size()-1 < location)
+        {
+            //need to make more cells to work with.
+            // difference + max size-1 = location
+            int difference = location - cellDataList.size()-1;
+
+            for (int i = 0; i < difference; i++) {
+                CellData instance = new CellData();
+
+                cellDataList.add(instance);
             }
 
-            cellInputList.remove(cellInputList.size() - 1);
+            /*At this point, our memory cells will have enough cells to accommodate the card
+            * we want to place in them*/
+
+            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, location));
         }
-        else {
+
+        //Check Inputlist if it's not empty and we are within valid bounds of data we have
+        if (cellInputList.size() != 0 && InputIndex < cellInputList.size()) {
+
+            //Handles if we hit empty input card
+            if(cellInputList.get(InputIndex).getCellData().equals(""))
+            {
+                //Blank Input, Advance input device, set PC to 00, halt CPU
+                ErrorEncountered = true;
+                ErrFlagCode = 1;
+                setProgramCounter(0);
+                InputIndex++;
+            }
+            else
+            {
+                overwriteCell = cellInputList.get(InputIndex);//True index number
+                //Set new data to memory cell at location
+
+                cellDataList.set(location, overwriteCell); //now we can add it.
+                InputIndex++; //Move the inputcards up by 1 for next.
+            }
+        }
+        else //We are out of bounds or no inputs
+        {
             ErrorEncountered = true;
             ErrFlagCode = 1;
             //No input cards left
