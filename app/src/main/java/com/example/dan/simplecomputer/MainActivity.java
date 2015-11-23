@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity
+{
 
     //CONSTANTS
     private static final boolean DEBUG = false;
@@ -38,7 +39,8 @@ public class MainActivity extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -61,11 +63,13 @@ public class MainActivity extends Activity {
         ProgramCounter = (EditText) this.findViewById(R.id.CPU_editTx_PC);
 
 
-        //Clear Button onClickEvent
+        /**************Clear Button Click events*****************/
         final Button clearButton = (Button) findViewById(R.id.buttonClear);
-        clearButton.setOnClickListener(new View.OnClickListener() {
+        clearButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 DialogHandler clearPopup = new DialogHandler(clearButton.getRootView());
                 clearPopup.invokeClearCheckBox();
                 //todo should cancel Async Task
@@ -90,28 +94,35 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Run-time Button
-        Button runButton = (Button) findViewById(R.id.buttonRun);
+        /**************Run-time Button click events****************/
+        final Button runButton = (Button) findViewById(R.id.buttonRun);
         runButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
                 if (DEBUG) Log.d(VERBOSE, "Running Program - RUN_HIT_FLAG");
-
-                /*todo Create an async task which calls StepTime function, async progress update will continually reevaluate CPU Display*/
                 if (DEBUG) Log.d(VERBOSE, String.format("CPUThread before Async is %s", CPUThread));
 
                 newAsyncTask = new ComputeTask();
                 newAsyncTask.execute(CPUThread);
 
                 if (DEBUG) Log.d(VERBOSE, String.format("CPUThread after Async is %s", CPUThread));
-
+            }
+        });
+        runButton.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                DialogHandler loader = new DialogHandler(runButton.getRootView());
+                loader.invokeProgramLoader();
+                return true;
             }
         });
 
 
-        //Step-time Button
+        /****************Step Button click events****************/
         Button stepButton = (Button) findViewById(R.id.buttonStep);
         stepButton.setOnClickListener(new View.OnClickListener()
         {
@@ -134,6 +145,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        /*************image button/menu click event*********************/
         ImageButton imgButton = (ImageButton) findViewById(R.id.OptionsButton);
         imgButton.setOnClickListener(new View.OnClickListener()
         {
@@ -181,8 +193,7 @@ public class MainActivity extends Activity {
             {
                 try {
                     CPUThread.setProgramCounter(Integer.getInteger(s.toString()));
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     CPUThread.setProgramCounter(Integer.parseInt(String.valueOf(ProgramCounter.getText())));
                 }
             }
@@ -191,7 +202,8 @@ public class MainActivity extends Activity {
     }
 
     //Change on screen display of CPU text, GUI-only function, does not change internal CPU
-    private void SetCPUDisplay(CPUHandler cpuHandler) {
+    private void SetCPUDisplay(CPUHandler cpuHandler)
+    {
         Accumulator.setText(String.valueOf(cpuHandler.getAccumulator()));
         AccumulatorCarry.setText(String.valueOf(cpuHandler.getAccumulatorCarry()));
         InstructionRegister.setText(String.valueOf(cpuHandler.getInstructionRegister()));
@@ -199,22 +211,25 @@ public class MainActivity extends Activity {
     }
 
     //CPU internal data and display clear method
-    private void ClearCPUDisplay() {
+    private void ClearCPUDisplay()
+    {
         CPUThread.ClearCPU(); //Clears internal
         SetCPUDisplay(CPUThread); //Resets display GUI
 
         popToast(String.format("CPU has been Reset\n AC: %d%d IR: %d PC: %d",
-                CPUThread.getAccumulatorCarry(),CPUThread.getAccumulator(),
+                CPUThread.getAccumulatorCarry(), CPUThread.getAccumulator(),
                 CPUThread.getAccumulator(),
                 CPUThread.getProgramCounter()));
     }
 
 
     //INNER CLASS ComputeTask, Asynchronous Background task, Handles Calculations on CPUThread
-    private class ComputeTask extends AsyncTask<CPUHandler, Integer, CPUHandler> {
+    private class ComputeTask extends AsyncTask<CPUHandler, Integer, CPUHandler>
+    {
 
         @Override
-        protected CPUHandler doInBackground(CPUHandler... params) {
+        protected CPUHandler doInBackground(CPUHandler... params)
+        {
             if (DEBUG) Log.d(VERBOSE, "params: " + params[0]);
 
             try {
@@ -226,7 +241,7 @@ public class MainActivity extends Activity {
                         @Override
                         public void run()
                         {
-                        //stuff that updates ui
+                            //stuff that updates ui
                             memoryCell.UpdateCells(CPUThread.getCellDataList());
 //                    inputCell.UpdateCells(CPUThread.getCellInputList());
                             outputCell.UpdateCells(CPUThread.getCellOutputList());
@@ -240,9 +255,7 @@ public class MainActivity extends Activity {
 
                     Thread.sleep(500);//Deliberate delay before next loop iteration
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             //todo Call step-time and once step is done, update directly with findbyViewid
@@ -250,7 +263,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             super.onPreExecute();
 
             //Grab all current data available on press into String List, let CPUThread handle calculations
@@ -263,9 +277,11 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(CPUHandler s) {
+        protected void onPostExecute(CPUHandler s)
+        {
             super.onPostExecute(s);
-            if (DEBUG) Log.d(VERBOSE, String.format("PostExecuteAsync <ASYNC_TASK_DONE> class return: %s", s));
+            if (DEBUG)
+                Log.d(VERBOSE, String.format("PostExecuteAsync <ASYNC_TASK_DONE> class return: %s", s));
 
             SetCPUDisplay(s);
 
@@ -281,7 +297,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdate(Integer... values)
+        {
             super.onProgressUpdate(values);
             //Todo implement method for progress change, values 0 to 100 i suppose
 
@@ -293,26 +310,30 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onCancelled() {
+        protected void onCancelled()
+        {
             super.onCancelled();
         }
 
         @Override
-        protected void onCancelled(CPUHandler cpuHandler) {
+        protected void onCancelled(CPUHandler cpuHandler)
+        {
             super.onCancelled(cpuHandler);
         }
     }
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     //INNER CLASS DIALOG HANDLER, CREATES POPUPS
-    protected class DialogHandler {
+    protected class DialogHandler
+    {
         private View dialogView;
 
         CharSequence[] items = {" ", " ", " ", " "};
@@ -320,11 +341,13 @@ public class MainActivity extends Activity {
         boolean[] itemsChecked = new boolean[items.length];
 
 
-        public DialogHandler(View view) {
+        public DialogHandler(View view)
+        {
             this.dialogView = view;
         }
 
-        public void invokeClearCheckBox() {
+        public void invokeClearCheckBox()
+        {
 
             items[0] = " CPU ";
             items[1] = " Memory ";
@@ -336,9 +359,11 @@ public class MainActivity extends Activity {
 
             builder.setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Which section would you like to clear?")
-                    .setMultiChoiceItems(items, itemsChecked, new DialogInterface.OnMultiChoiceClickListener() {
+                    .setMultiChoiceItems(items, itemsChecked, new DialogInterface.OnMultiChoiceClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        public void onClick(DialogInterface dialog, int which, boolean isChecked)
+                        {
                             itemsChecked[which] = isChecked;
                         }
                     })
@@ -374,11 +399,12 @@ public class MainActivity extends Activity {
                                         }
                                         break;
                                     default:
-                                        if (DEBUG) Log.d(VERBOSE, "Out of bounds: itemsChecked.length");
+                                        if (DEBUG)
+                                            Log.d(VERBOSE, "Out of bounds: itemsChecked.length");
                                 }
                             }
                             outputCell.UpdateCells(CPUThread.getCellOutputList());
-//                            inputCell.UpdateCells(CPUThread.getCellInputList());
+                            inputCell.UpdateCells(CPUThread.getCellInputList());
                             memoryCell.UpdateCells(CPUThread.getCellDataList());
                         }
                     })
@@ -396,22 +422,34 @@ public class MainActivity extends Activity {
             builder.show(); //Now we pop it up
         }
 
-        public void invokeProgramLoader() {
+
+        /******Program preloader********/
+        public void invokeProgramLoader()
+        {
 
             items[0] = " BootLoad ";
             items[1] = " Division ";
             items[2] = " Shifting Digits ";
             items[3] = " Absolute Value ";
+            final int checked = -1;
 
             //Building dynamic AlertDialog
             AlertDialog.Builder builder = new AlertDialog.Builder(dialogView.getContext());
 
             builder.setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Which example would you like to try?")
-                    .setMultiChoiceItems(items, itemsChecked, new DialogInterface.OnMultiChoiceClickListener() {
+                    .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            itemsChecked[which] = isChecked;
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            //Load data into internal CPU, which then gets called into the GUI for display
+
+                            switch(which) {
+                                case 0: CPUThread.LoadInputArray(PreloadData(which)); //boot load input
+                                    break;
+                                default: CPUThread.LoadInputArray(PreloadData(0));
+                            }
                         }
                     })
                     .setPositiveButton("Load Selected", new DialogInterface.OnClickListener()
@@ -420,42 +458,8 @@ public class MainActivity extends Activity {
                         public void onClick(DialogInterface dialog, int which)
                         {
 
-                            for (int index = 0; index < itemsChecked.length; index++) {
-                                switch (index) {
-                                    case 0: //CPU
-                                        if (itemsChecked[index]) {
-
-                                            List<CellData> boot = new ArrayList<CellData>(99);
-                                            boot.add(new CellData());
-
-                                            memoryCell.UpdateCells(boot);
-
-                                        }
-                                        break;
-                                    case 1: //Memory
-                                        if (itemsChecked[index]) {
-                                            memoryCell.ClearAllCells();
-                                            CPUThread.LoadMemoryArray(memoryCell.getArrayData());
-                                        }
-                                        break;
-                                    case 2: //Input
-                                        if (itemsChecked[index]) {
-                                            inputCell.ClearAllCells();
-                                            CPUThread.LoadInputArray(inputCell.getArrayData());
-                                        }
-                                        break;
-                                    case 3: //Output
-                                        if (itemsChecked[index]) {
-                                            outputCell.ClearAllCells();
-//                                            CPUThread.LoadOutputArray(outputCell.getArrayData());
-                                        }
-                                        break;
-                                    default:
-                                        if (DEBUG) Log.d(VERBOSE, "Out of bounds: itemsChecked.length");
-                                }
-                            }
                             outputCell.UpdateCells(CPUThread.getCellOutputList());
-//                            inputCell.UpdateCells(CPUThread.getCellInputList());
+                            inputCell.UpdateCells(CPUThread.getCellInputList());
                             memoryCell.UpdateCells(CPUThread.getCellDataList());
                         }
                     })
@@ -476,7 +480,8 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -493,12 +498,19 @@ public class MainActivity extends Activity {
     //Todo create a File Read in, can use this as template too
     private List<CellData> PreloadData(int which)
     {
-        List<CellData> example;
-        CellData instance = new CellData();
+        List<CellData> list = new ArrayList<>();
 
-        switch(which)
-        {
+
+        switch (which) {
             case 0:
+                String[] d = {"002", "600", "003", "200",
+                        "004", "501", "005", "601", "002", "401"};
+                for (int i = 0; i < d.length; i++) {
+                    CellData instance = new CellData();
+                    instance.setCellIDNumber(i);
+                    instance.setCellData(d[i]);
+                    list.add(instance);
+                }
                 break;
             case 1:
                 break;
@@ -507,11 +519,12 @@ public class MainActivity extends Activity {
             case 3:
                 break;
         }
-        return null;
+        return list;
     }
 
 
-    private void popToast(String text) {
+    private void popToast(String text)
+    {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }//popToast
 
