@@ -4,7 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="addbtn_txt2">Add Input\nCard</string>
-    <string name="addbtn_txt1">Add Cell\n(Hold for More)</string>
+    <!--<string name="addbtn_txt1">Add Cell\n(Hold for More)</string>-->
+    <string name="addbtn_txt1">Search for Cell</string>
     <string name="IOLabel">INPUT</string>
     <string name="IOLabel2">OUTPUT</string>
     <string name="memLabel">MEMORY</string>

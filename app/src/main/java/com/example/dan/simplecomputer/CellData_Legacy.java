@@ -5,12 +5,12 @@ package com.example.dan.simplecomputer;
  * Simple Class object that stores data from cells into data
  *
  */
-public class CellData
+public class CellData_Legacy
 {
     private int cellIDNumber;
     private String cellData;
 
-    public CellData()
+    public CellData_Legacy()
     {
         this.cellIDNumber = 0;
         this.cellData = "";

@@ -17,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends Activity
 {
@@ -37,16 +34,11 @@ public class MainActivity extends Activity
     //CellFragments
     MemoryCell memoryCell, inputCell, outputCell;
 
-    List<CellData> MainMemory, MainInput, MainOutput;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Create SimpleCPU
-        this.CPUThread = new CPUHandler();
 
         FragmentManager fragmentManager = getFragmentManager();
         //Great, now to deal with instances...
@@ -56,6 +48,8 @@ public class MainActivity extends Activity
         this.inputCell = (MemoryCell) fragmentManager.findFragmentById(R.id.listView_InputCard);
         this.outputCell = (MemoryCell) fragmentManager.findFragmentById(R.id.listView_OutputCard);
 
+        //Create SimpleCPU
+        this.CPUThread = new CPUHandler(memoryCell,inputCell,outputCell);
 
         //Initialize the text boxes
         this.Accumulator = (EditText) this.findViewById(R.id.CPU_editTx_AC);
@@ -89,14 +83,6 @@ public class MainActivity extends Activity
                 memoryCell.ClearAllCells();
                 inputCell.ClearAllCells();
                 outputCell.ClearAllCells();
-                //todo should cancel Async Task maybe??
-
-                CPUThread.LoadInputArray(memoryCell.getArrayData());
-                CPUThread.LoadMemoryArray(memoryCell.getArrayData());
-
-                memoryCell.UpdateCells(memoryCell.getArrayData());
-                inputCell.UpdateCells(inputCell.getArrayData());
-                outputCell.UpdateCells(outputCell.getArrayData());
 
                 return true;
             }
@@ -134,7 +120,6 @@ public class MainActivity extends Activity
             }
         });
 
-
         /****************Step Button click events****************/
         Button stepButton = (Button) findViewById(R.id.buttonStep);
         stepButton.setOnClickListener(new View.OnClickListener()
@@ -143,13 +128,7 @@ public class MainActivity extends Activity
             public void onClick(View v)
             {
 
-                CPUThread.LoadMemoryArray(memoryCell.getArrayData());
-                CPUThread.LoadInputArray(inputCell.getArrayData());
-
                 CPUThread.CallStepTime();
-
-                memoryCell.UpdateCells(CPUThread.getCellDataList());
-                outputCell.UpdateCells(CPUThread.getCellOutputList());
 
                 SetCPUDisplay(CPUThread);
             }
@@ -241,24 +220,21 @@ public class MainActivity extends Activity
             try {
                 while (!CPUThread.CheckError()) {
 
-                    CPUThread.CallStepTime();
-
                     runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
                             //stuff that updates ui
-                            memoryCell.UpdateCells(CPUThread.getCellDataList());
-//                    inputCell.UpdateCells(CPUThread.getCellInputList());
-                            outputCell.UpdateCells(CPUThread.getCellOutputList());
+                            CPUThread.CallStepTime();
+
+                            publishProgress(CPUThread.getProgramCounter(),
+                                    CPUThread.getAccumulator(), CPUThread.getAccumulatorCarry(),
+                                    CPUThread.getInstructionRegister());
                         }
                     });
 
-
-                    publishProgress(CPUThread.getProgramCounter(),
-                            CPUThread.getAccumulator(), CPUThread.getAccumulatorCarry(),
-                            CPUThread.getInstructionRegister());
+                    if (DEBUG) Log.d(VERBOSE, String.format("External %d", CPUThread.getProgramCounter()));
 
                     Thread.sleep(500);//Deliberate delay before next loop iteration
                 }
@@ -274,13 +250,6 @@ public class MainActivity extends Activity
         {
             super.onPreExecute();
 
-            //Grab all current data available on press into String List, let CPUThread handle calculations
-            //Load CPUThread so we don't get an internal null data array
-            CPUThread.LoadMemoryArray(memoryCell.getArrayData());
-            CPUThread.LoadInputArray(inputCell.getArrayData());
-//            CPUThread.LoadOutputArray(outputCell.getArrayData());
-
-
         }
 
         @Override
@@ -292,10 +261,6 @@ public class MainActivity extends Activity
 
             SetCPUDisplay(s);
 
-            //Update ALL UI CELLS with current values in CPUThread.
-            memoryCell.UpdateCells(CPUThread.getCellDataList());
-            inputCell.UpdateCells(CPUThread.getCellInputList());
-            outputCell.UpdateCells(CPUThread.getCellOutputList());
 
             popToast(CPUThread.getErrStr());
 
@@ -313,6 +278,8 @@ public class MainActivity extends Activity
             Accumulator.setText(String.format("%03d", values[1]));
             AccumulatorCarry.setText(String.valueOf(values[2]));
             InstructionRegister.setText(String.format("%03d", values[3]));
+
+            if (DEBUG) Log.d(VERBOSE, String.format("Progress Update %d", values[0]));
 
         }
 
@@ -391,13 +358,13 @@ public class MainActivity extends Activity
                                     case 1: //Memory
                                         if (itemsChecked[index]) {
                                             memoryCell.ClearAllCells();
-                                            CPUThread.LoadMemoryArray(memoryCell.getArrayData());
+//                                            CPUThread.LoadMemoryArray(memoryCell.getArrayData());
                                         }
                                         break;
                                     case 2: //Input
                                         if (itemsChecked[index]) {
                                             inputCell.ClearAllCells();
-                                            CPUThread.LoadInputArray(inputCell.getArrayData());
+//                                            CPUThread.LoadInputArray(inputCell.getArrayData());
                                         }
                                         break;
                                     case 3: //Output
@@ -411,9 +378,6 @@ public class MainActivity extends Activity
                                             Log.d(VERBOSE, "Out of bounds: itemsChecked.length");
                                 }
                             }
-                            outputCell.UpdateCells(CPUThread.getCellOutputList());
-                            inputCell.UpdateCells(CPUThread.getCellInputList());
-                            memoryCell.UpdateCells(CPUThread.getCellDataList());
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -435,7 +399,7 @@ public class MainActivity extends Activity
         public void invokeProgramLoader()
         {
 
-            items[0] = " BootLoad ";
+            items[0] = " Bootload ";
             items[1] = " Division ";
             items[2] = " Shifting Digits ";
             items[3] = " Absolute Value ";
@@ -448,20 +412,22 @@ public class MainActivity extends Activity
                     .setTitle("Which example would you like to try?")
                     .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener()
                     {
+
+                    //todo // FIXME: 11/24/2015 create program loader
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
                             //Load data into internal CPU, which then gets called into the GUI for display
 
-                            switch(which) {
-                                case 0: CPUThread.LoadInputArray(PreloadData(which)); //boot load input
-                                        itemsChecked[0] = true;
-                                    break;
-                                case 1: CPUThread.LoadMemoryArray(PreloadData(which));
-                                        itemsChecked[1] = true;
-                                    break;
-                                default: CPUThread.LoadInputArray(PreloadData(0));
-                            }
+//                            switch(which) {
+//                                case 0: CPUThread.LoadInputArray(PreloadData(which)); //boot load input
+//                                        itemsChecked[0] = true;
+//                                    break;
+//                                case 1: CPUThread.LoadMemoryArray(PreloadData(which));
+//                                        itemsChecked[1] = true;
+//                                    break;
+//                                default: CPUThread.LoadInputArray(PreloadData(0));
+//                            }
                         }
                     })
                     .setPositiveButton("Load Selected", new DialogInterface.OnClickListener()
@@ -469,13 +435,13 @@ public class MainActivity extends Activity
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            if(itemsChecked[0]) {
-                                inputCell.UpdateCells(CPUThread.getCellInputList());
-                            }
-                            if(itemsChecked[1])
-                            {
-                                memoryCell.UpdateCells(CPUThread.getCellDataList());
-                            }
+//                            if(itemsChecked[0]) {
+//                                inputCell.UpdateCells(CPUThread.getCellInputList());
+//                            }
+//                            if(itemsChecked[1])
+//                            {
+//                                memoryCell.UpdateCells(CPUThread.getCellDataList());
+//                            }
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -511,6 +477,7 @@ public class MainActivity extends Activity
     }
 
     //Todo create a File Read in, can use this as template too
+    /*
     private List<CellData> PreloadData(int which)
     {
         List<CellData> list = new ArrayList<>();
@@ -536,6 +503,8 @@ public class MainActivity extends Activity
                     instance.setCellIDNumber(i);
                     instance.setCellData(dataSplit[i]);
                     list.add(instance);
+
+                    if (DEBUG) Log.d(VERBOSE, String.format("division: %s", dataSplit[i]));
                 }
 
                 break;
@@ -544,8 +513,10 @@ public class MainActivity extends Activity
             case 3:
                 break;
         }
+
+        if (DEBUG) Log.d(VERBOSE, String.format("%s", list));
         return list;
-    }
+    }*/
 
 
     private void popToast(String text)

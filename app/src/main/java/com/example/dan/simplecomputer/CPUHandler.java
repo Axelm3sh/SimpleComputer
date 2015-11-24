@@ -1,12 +1,10 @@
 package com.example.dan.simplecomputer;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +17,7 @@ public class CPUHandler extends Activity
     private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
-    private List<CellData> cellDataList; //Array for memory cell data
-    private List<CellData> cellInputList; //Array for memory cell Inputs
-    private List<CellData> cellOutputList; //Array for memory cell Outputs
-
+    MemoryCell memoryCell, inputCell, outputCell;
 
     private int Accumulator, AccumulatorCarry, InstructionRegister, ProgramCounter, InputIndex;
 
@@ -33,7 +28,7 @@ public class CPUHandler extends Activity
 
 
     //Constructor
-    public CPUHandler()
+    public CPUHandler(MemoryCell memory, MemoryCell input, MemoryCell output)
     {
         if (DEBUG) Log.d("DDP", "Inside Constructor CPU CLASS");
 
@@ -42,9 +37,11 @@ public class CPUHandler extends Activity
         this.Accumulator = 0;
         this.InstructionRegister = 0;
         this.InputIndex = 0;
-        this.cellDataList = new ArrayList<>(); //Empty Mem List, will be overwritten by later func
-        this.cellInputList = new ArrayList<>();//Empty Input list, will be overwritten by later func
-        this.cellOutputList = new ArrayList<>(); //Output cells don't have to be instanced.
+
+        this.memoryCell = memory;
+        this.inputCell = input;
+        this.outputCell = output;
+
         // Data will be generated after calling Step-time
     }
 
@@ -59,7 +56,7 @@ public class CPUHandler extends Activity
         ErrorEncountered = false;
         ErrFlagCode = 0;
 
-        cellOutputList.clear();
+//        cellOutputList.clear();
     }
 
     public boolean CheckError()
@@ -107,27 +104,25 @@ public class CPUHandler extends Activity
         *   - increment Program Counter*/
         int pc = getProgramCounter();
 
-        if (DEBUG) Log.d(VERBOSE, String.format("DATA ARRAY: %s", cellDataList));
-        String step = getSingleCellData(pc, cellDataList);
+        String step = memoryCell.GetCellData(pc);
 
+        if (DEBUG) Log.d(VERBOSE, String.format("Step is %s", step));
 
         //Check for null string/empty string
-        if (step == null) {
+        if (!step.equals("")) {
+            setInstructionRegister(Integer.parseInt(step));
+        }
+        else {
             ErrorEncountered = true;
             ErrFlagCode = 2;
         }
-        else {
-            if (!step.equals("")) {
-                setInstructionRegister(Integer.parseInt(step));
-                setProgramCounter(getProgramCounter() + 1); //Increment PC by 1
-            }
+        setProgramCounter(getProgramCounter() + 1); //Increment PC by 1
+
+        if (DEBUG) Log.d(VERBOSE, String.format("Internal %d", getProgramCounter()));
 
         /*Decode Cycle
         *   - decode the op-code part of the instruction in the IR*/
-            InterpretCurrentInstruction(step);
-        }
-
-
+        InterpretCurrentInstruction(step);
     }
 
     public void InterpretCurrentInstruction(String value)
@@ -150,27 +145,6 @@ public class CPUHandler extends Activity
         /*Execution Cycle
         *   - perform execution required by op-code, using address field of the instruction
         *   in the Instruction Register*/
-
-        //cellDataList max size = true index num + 1, location references a true index num.
-        if(cellDataList.size()-1 < memoryActor)
-        {
-            //need to make more cells to work with.
-            // difference + max size-1 = location
-            int difference = memoryActor - cellDataList.size();
-
-            for (int i = 0; i < difference+1; i++) {
-                CellData instance = new CellData();
-
-                cellDataList.add(instance);
-
-                if (DEBUG) Log.d(VERBOSE, String.format("i: %d", i));
-            }
-
-            /*At this point, our memory cells will have enough cells to accommodate the card
-            * we want to place in them*/
-
-            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, memoryActor));
-        }
 
         try {
 
@@ -221,131 +195,6 @@ public class CPUHandler extends Activity
         }
     }
 
-    //Note to self, watch out when you copy and paste too much...
-
-    //Load the data into list using maxCellsGenerated as number of cells.
-    public void LoadMemoryArray(List<CellData> passingData)
-    {
-
-        //if cellDataList is empty or passingData larger size
-        if (cellDataList.isEmpty() || TestArrayInequality(passingData, cellDataList) == 1) {
-            int count;
-            if (cellDataList.isEmpty()) {
-                count = 0;
-            }
-            else {
-                //large number - smaller num = difference in cells we need to make
-                count = passingData.size() - cellDataList.size();
-            }
-
-            for (int i = count; i < passingData.size(); i++) {
-                CellData instance = new CellData();
-                cellDataList.add(instance);     //instance our slots to work and write in
-            }
-
-            //At this point cellDataList is same size as our passingData Array, start copying
-            for (int i = 0; i < cellDataList.size(); i++) {
-
-                if(i != cellDataList.size() && i < cellInputList.size()) {
-                    cellDataList.set(i, passingData.get(i));
-                }
-            }
-        }
-
-        /*At this point, cellData should be an exact copy of whatever data we have on the GUI
-        * We can now perform operations that change the current cellDataList
-        * If we call getCellDataList, it will return this array.*/
-
-        if (DEBUG) Log.d("DDP", "Successful list Add <Memory>");
-    }
-
-    //Load the data into list using maxCellsGenerated as number of cells.
-    public void LoadInputArray(List<CellData> passingData)
-    {
-
-        //if cellDataList is empty or passingData larger size
-        if (cellInputList.isEmpty() || TestArrayInequality(passingData, cellInputList) == 1) {
-            int count;
-            if (cellInputList.isEmpty()) {
-                count = 0;
-            }
-            else {
-                //large number - smaller num = difference in cells we need to make
-                count = passingData.size() - cellInputList.size();
-            }
-
-            for (int i = count; i < passingData.size(); i++) {
-                CellData instance = new CellData();
-                cellInputList.add(instance);     //instance our slots to work and write in
-            }
-
-
-            //At this point cellDataList is same size as our passingData Array, start copying
-            for (int i = 0; i < cellInputList.size(); i++) {
-
-                if(i != cellInputList.size() && i < cellInputList.size()) {
-                    cellInputList.set(i, passingData.get(i));
-                }
-            }
-        }
-
-        /*At this point, cellData should be an exact copy of whatever data we have on the GUI
-        * We can now perform operations that change the current cellInputList
-        * If we call getcellInputList, it will return this array.*/
-        if (DEBUG) Log.d("DDP", "Successful list Add <Input>");
-
-    }
-
-    //Load the data into list using maxCellsGenerated as number of cells.
-    //fixme: Should this really be called at all? Not like you can edit outputs anyways...Redundant?
-//    public void LoadOutputArray(List<CellData> cellDatas) {
-//
-//        //If cellDataList is not empty, we start to clear it and prep for new data to be loaded
-//        if (!cellOutputList.isEmpty()) {
-//            cellOutputList.clear();
-//            if(DEBUG) Log.d("DDP", "Clear list Initialize");
-//        }
-//
-//        for (int i = 0; i < cellDatas.size(); i++) {
-//            CellData overwriteCell = cellDatas.get(i);
-//
-//            cellOutputList.add(overwriteCell);
-//        }
-//        if (DEBUG) Log.d("DDP", "Successful list Add <Output>");
-//    }
-
-
-    public List<CellData> getCellDataList()
-    {
-        if (DEBUG) Log.d("DDP", "Getting cellDataList from CPU internal");
-        return cellDataList;
-    }
-
-    //Should be called when you want to load in an input list from a preloaded program
-    public List<CellData> getCellInputList() {
-        if (DEBUG) Log.d("DDP", "Getting cellInputList from CPU internal");
-        return cellInputList;
-    }
-
-    public List<CellData> getCellOutputList()
-    {
-        if (DEBUG) Log.d("DDP", "Getting cellOutputList from CPU internal");
-        return cellOutputList;
-    }
-
-    //getSingleCellData - returns String data from <Type>List at index <location>
-    @Nullable
-    public String getSingleCellData(int location, List<CellData> list)
-    {
-        if (DEBUG) Log.d("DDP", String.format("cellDataList: %s", list));
-
-        if (location < list.size()) {
-            return list.get(location).getCellData();
-        }
-        else {
-            return "";
-        }
-    }
 
     //Compare Arrays before we do anything, other functions will handle the size problem
     private int TestArrayInequality(List firstArray, List secondArray)
@@ -385,55 +234,32 @@ public class CPUHandler extends Activity
     //method - location @index of: data
     private void GetInputFromCell(int location)
     {
-        //Reverse stack. Last card is first input
-        CellData overwriteCell;
-
-        //Check Inputlist if it's not empty and we are within valid bounds of data we have
-        if (cellInputList.size() != 0 && InputIndex < cellInputList.size()) {
+        String temp = inputCell.GetCellData(InputIndex);
 
             //Handles if we hit empty input card
-            if(cellInputList.get(InputIndex).getCellData().equals(""))
-            {
+            if (temp.equals("")) {
                 //Blank Input, Advance input device, set PC to 00, halt CPU
                 ErrorEncountered = true;
                 ErrFlagCode = 1;
                 setProgramCounter(0);
                 InputIndex++;
             }
-            else
-            {
-                overwriteCell = cellInputList.get(InputIndex);//True index number
-                //Set new data to memory cell at location
-
-                cellDataList.set(location, overwriteCell); //now we can add it.
+            else {
+                memoryCell.ChangeCell(location, temp);
                 InputIndex++; //Move the inputcards up by 1 for next.
             }
-        }
-        else //We are out of bounds or no inputs
-        {
-            ErrorEncountered = true;
-            ErrFlagCode = 1;
-            //No input cards left
-        }
 
     }
 
     //Logic for OPCODE 1
     private void SendToOutputCard(int location)
     {
-        CellData instance = new CellData();
+        String instance = memoryCell.GetCellData(location);
 
-        instance.setCellData(cellDataList.get(location).getCellData()); //Set cell data
+        outputCell.AddCell();
+        outputCell.ChangeCell(outputCell.returnNumCellsGenerated()-1,instance);
 
-        if (cellOutputList.size() == 0) {
-            instance.setCellIDNumber(0); //Label will be 0 if size is 0
-        }
-        else {
-            //Label will be size - 1 to represent true index value
-            instance.setCellIDNumber(cellOutputList.size() - 1);
-        }
 
-        cellOutputList.add(instance); //Add instance to list
     }
 
     //Logic for OPCODE 2
@@ -442,8 +268,15 @@ public class CPUHandler extends Activity
 
         int numAdd;
 
-
-        numAdd = Integer.parseInt(cellDataList.get(location).getCellData());
+        if(!outputCell.GetCellData(location).equals("")) {
+            numAdd = Integer.parseInt(outputCell.GetCellData(location));
+        }
+        else
+        {
+            numAdd = 0;
+            ErrFlagCode = 2;
+            ErrorEncountered = true;
+        }
 
         Accumulator = this.Accumulator + numAdd;
         if (Accumulator <= 1000) {
@@ -458,7 +291,15 @@ public class CPUHandler extends Activity
 
         int numSub;
 
-        numSub = Integer.parseInt(cellDataList.get(location).getCellData());
+        if(!outputCell.GetCellData(location).equals("")) {
+            numSub = Integer.parseInt(outputCell.GetCellData(location));
+        }
+        else
+        {
+            numSub = 0;
+            ErrFlagCode = 2;
+            ErrorEncountered = true;
+        }
 
         Accumulator = this.Accumulator - numSub;
         if (Accumulator >= -1000) {
@@ -473,7 +314,15 @@ public class CPUHandler extends Activity
     {
         int number;
 
-        number = Integer.parseInt(cellDataList.get(location).getCellData());
+        if(!outputCell.GetCellData(location).equals("")) {
+            number = Integer.parseInt(outputCell.GetCellData(location));
+        }
+        else
+        {
+            number = -1;
+            ErrFlagCode = 2;
+            ErrorEncountered = true;
+        }
 
         setAccumulator(number);
     }
@@ -481,15 +330,14 @@ public class CPUHandler extends Activity
     //OPCODE 5
     public void StoreAccumulator(int location) //TODO store accumulator
     {
-        //Grab CellData at location, set current accumulator value into it's celldata
-
-        cellDataList.get(location).setCellData(String.valueOf(getAccumulator()));
+        //Grab Data at location, set current accumulator value into it's data
+        memoryCell.ChangeCell(location, String.valueOf(getAccumulator()));
     }
 
     public void JumpTo(int location)
     {
         //Cell 99 is at true index 98 in list
-        cellDataList.get(cellDataList.size() - 1).setCellData(String.valueOf(getProgramCounter()));
+        memoryCell.ChangeCell(99, String.valueOf(getProgramCounter()));
 
         setProgramCounter(location);
 
@@ -504,6 +352,7 @@ public class CPUHandler extends Activity
 
     public void ShiftAccumulator(int location)
     {
+        //000000000xxx000000000
         String cellection = String.format("%012d%09d", getAccumulator(), 0);
         //Calculate x,y shift values (8xy): x = left int values, y = right int values
         int left, right;
@@ -518,6 +367,8 @@ public class CPUHandler extends Activity
         for (int i = 0; i < right; i++) {
             cellection = cellection.charAt(0) + cellection.substring(1, cellection.length());
         }
+
+        setAccumulator(Integer.parseInt(cellection.substring(9,11)));
 
     }
 
