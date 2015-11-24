@@ -25,7 +25,7 @@ public class MainActivity extends Activity
 {
 
     //CONSTANTS
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
     //Classes
@@ -37,6 +37,7 @@ public class MainActivity extends Activity
     //CellFragments
     MemoryCell memoryCell, inputCell, outputCell;
 
+    List<CellData> MainMemory, MainInput, MainOutput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

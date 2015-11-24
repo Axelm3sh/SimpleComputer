@@ -16,7 +16,7 @@ import java.util.List;
 public class CPUHandler extends Activity
 {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
     private List<CellData> cellDataList; //Array for memory cell data

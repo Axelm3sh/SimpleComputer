@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class MemoryCell extends Fragment
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
     //counter to keep track of max cells currently have
