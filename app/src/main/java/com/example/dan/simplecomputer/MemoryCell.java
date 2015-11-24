@@ -272,11 +272,13 @@ public class MemoryCell extends Fragment
             int i = 0;
             while (i < Data.size()) {
 
-                //Change what data is changed, skip unchanged data. Gives less calls to ChangeCells
+                /*//Change what data is changed, skip unchanged data. Gives less calls to ChangeCells
                 if(arrayData.get(i).getCellData().equals(Data.get(i).getCellData())) {
                     //Data[] -> .get(location) -> returns DataObj in array -> calls getCellData
                     ChangeCell(i, Data.get(i).getCellData());
-                }
+                }*/
+
+                ChangeCell(i, Data.get(i).getCellData());
 
                 i++;//Go to next cell to update
             }
@@ -289,17 +291,20 @@ public class MemoryCell extends Fragment
     //Pretty expensive to re-create all the cells, use sparingly
     public void ClearAllCells()
     {
-        scroll.removeAllViews(); //Gets rid of all child views in scroll
+//        scroll.removeAllViews(); //Gets rid of all child views in scroll
 
         // Clear internal array of numbers stored
 //        arrayData.clear(); <- This gives so many out of index problems later on, screw this function
 
         for (int i = 0; i < arrayData.size(); i++) {
-            arrayData.set(i, new CellData());
+            CellData instance = new CellData();
+            instance.setCellIDNumber(i);
+
+            arrayData.set(i, instance);
             //Just make every value default to 0 so we still have our slots to work with
         }
 
-        resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
+//        resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
     }
 
     //ChangeCell, specify which location to change. if out of index bounds, create until available

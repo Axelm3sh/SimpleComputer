@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class MainActivity extends Activity
 {
 
     //CONSTANTS
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String VERBOSE = "DDP";
 
     //Classes
@@ -57,10 +57,10 @@ public class MainActivity extends Activity
 
 
         //Initialize the text boxes
-        Accumulator = (EditText) this.findViewById(R.id.CPU_editTx_AC);
-        AccumulatorCarry = (EditText) this.findViewById(R.id.CPU_editTx_AC_carry);
-        InstructionRegister = (EditText) this.findViewById(R.id.CPU_editTx_IR);
-        ProgramCounter = (EditText) this.findViewById(R.id.CPU_editTx_PC);
+        this.Accumulator = (EditText) this.findViewById(R.id.CPU_editTx_AC);
+        this.AccumulatorCarry = (EditText) this.findViewById(R.id.CPU_editTx_AC_carry);
+        this.InstructionRegister = (EditText) this.findViewById(R.id.CPU_editTx_IR);
+        this.ProgramCounter = (EditText) this.findViewById(R.id.CPU_editTx_PC);
 
 
         /**************Clear Button Click events*****************/
@@ -90,6 +90,13 @@ public class MainActivity extends Activity
                 outputCell.ClearAllCells();
                 //todo should cancel Async Task maybe??
 
+                CPUThread.LoadInputArray(memoryCell.getArrayData());
+                CPUThread.LoadMemoryArray(memoryCell.getArrayData());
+
+                memoryCell.UpdateCells(memoryCell.getArrayData());
+                inputCell.UpdateCells(inputCell.getArrayData());
+                outputCell.UpdateCells(outputCell.getArrayData());
+
                 return true;
             }
         });
@@ -104,6 +111,9 @@ public class MainActivity extends Activity
                 if (DEBUG) Log.d(VERBOSE, "Running Program - RUN_HIT_FLAG");
                 if (DEBUG) Log.d(VERBOSE, String.format("CPUThread before Async is %s", CPUThread));
 
+                //Get current Value of PC counter before we start operation
+                CPUThread.setProgramCounter(Integer.parseInt(ProgramCounter.getText().toString()));
+
                 newAsyncTask = new ComputeTask();
                 newAsyncTask.execute(CPUThread);
 
@@ -115,6 +125,8 @@ public class MainActivity extends Activity
             @Override
             public boolean onLongClick(View v)
             {
+                CPUThread.ClearCPU(); //Clear CPU
+
                 DialogHandler loader = new DialogHandler(runButton.getRootView());
                 loader.invokeProgramLoader();
                 return true;
@@ -145,17 +157,13 @@ public class MainActivity extends Activity
             }
         });
 
-        /*************image button/menu click event*********************/
-        ImageButton imgButton = (ImageButton) findViewById(R.id.OptionsButton);
-        imgButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                //todo help file, save file, load file
-            }
-        });
 
+    }
+
+    /*************image button/menu click event*********************/
+    public void onClick(View view)
+    {
+        startActivity(new Intent(this,HelpActivity.class));
     }
 
     @Override
@@ -192,7 +200,7 @@ public class MainActivity extends Activity
             public void afterTextChanged(Editable s)
             {
                 try {
-                    CPUThread.setProgramCounter(Integer.getInteger(s.toString()));
+                    CPUThread.setProgramCounter(Integer.parseInt(s.toString()));
                 } catch (Exception e) {
                     CPUThread.setProgramCounter(Integer.parseInt(String.valueOf(ProgramCounter.getText())));
                 }
@@ -204,10 +212,10 @@ public class MainActivity extends Activity
     //Change on screen display of CPU text, GUI-only function, does not change internal CPU
     private void SetCPUDisplay(CPUHandler cpuHandler)
     {
-        Accumulator.setText(String.valueOf(cpuHandler.getAccumulator()));
+        Accumulator.setText(String.format("%03d",cpuHandler.getAccumulator()));
         AccumulatorCarry.setText(String.valueOf(cpuHandler.getAccumulatorCarry()));
-        InstructionRegister.setText(String.valueOf(cpuHandler.getInstructionRegister()));
-        ProgramCounter.setText(String.valueOf(cpuHandler.getProgramCounter()));
+        InstructionRegister.setText(String.format("%03d", cpuHandler.getInstructionRegister()));
+        ProgramCounter.setText(String.format("%02d", cpuHandler.getProgramCounter()));
     }
 
     //CPU internal data and display clear method
@@ -234,6 +242,7 @@ public class MainActivity extends Activity
 
             try {
                 while (!CPUThread.CheckError()) {
+
                     CPUThread.CallStepTime();
 
                     runOnUiThread(new Runnable()
@@ -287,7 +296,7 @@ public class MainActivity extends Activity
 
             //Update ALL UI CELLS with current values in CPUThread.
             memoryCell.UpdateCells(CPUThread.getCellDataList());
-//            inputCell.UpdateCells(CPUThread.getCellInputList());
+            inputCell.UpdateCells(CPUThread.getCellInputList());
             outputCell.UpdateCells(CPUThread.getCellOutputList());
 
             popToast(CPUThread.getErrStr());
@@ -378,6 +387,7 @@ public class MainActivity extends Activity
                                     case 0: //CPU
                                         if (itemsChecked[index]) {
                                             ClearCPUDisplay();
+
                                         }
                                         break;
                                     case 1: //Memory
@@ -434,7 +444,7 @@ public class MainActivity extends Activity
             final int checked = -1;
 
             //Building dynamic AlertDialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(dialogView.getContext());
+            final AlertDialog.Builder builder = new AlertDialog.Builder(dialogView.getContext());
 
             builder.setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Which example would you like to try?")
@@ -447,6 +457,8 @@ public class MainActivity extends Activity
 
                             switch(which) {
                                 case 0: CPUThread.LoadInputArray(PreloadData(which)); //boot load input
+                                    break;
+                                case 1: CPUThread.LoadInputArray(PreloadData(which));
                                     break;
                                 default: CPUThread.LoadInputArray(PreloadData(0));
                             }
@@ -503,16 +515,24 @@ public class MainActivity extends Activity
 
         switch (which) {
             case 0:
-                String[] d = {"002", "600", "003", "200",
+                String[] a = {"002", "600", "003", "200",
                         "004", "501", "005", "601", "002", "401"};
-                for (int i = 0; i < d.length; i++) {
+                for (int i = 0; i < a.length; i++) {
                     CellData instance = new CellData();
                     instance.setCellIDNumber(i);
-                    instance.setCellData(d[i]);
+                    instance.setCellData(a[i]);
                     list.add(instance);
                 }
                 break;
             case 1:
+                String data = "001,,,,,,,,,,,,,,,,,,,,804,534,035,036,435,336,732,535,434,200,534,624,110,900";
+                String[] dataSplit = data.split(",");
+
+                for (String aDataSplit : dataSplit) {
+                    if (DEBUG) Log.d(VERBOSE, String.format("%s", aDataSplit));
+                }
+
+
                 break;
             case 2:
                 break;

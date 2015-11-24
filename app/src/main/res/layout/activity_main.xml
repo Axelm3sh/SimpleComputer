@@ -76,6 +76,7 @@
                     android:contentDescription="HELP"
                     android:src="@drawable/ic_helpicon"
                     android:id="@+id/OptionsButton"
+                    android:onClick="onClick"
                     android:cropToPadding="false"
                     android:clickable="true"
                     android:baselineAlignBottom="false"
