@@ -25,7 +25,7 @@ public class MainActivity extends Activity
 {
 
     //CONSTANTS
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String VERBOSE = "DDP";
 
     //Classes
@@ -150,10 +150,7 @@ public class MainActivity extends Activity
                 memoryCell.UpdateCells(CPUThread.getCellDataList());
                 outputCell.UpdateCells(CPUThread.getCellOutputList());
 
-                ProgramCounter.setText(String.valueOf(CPUThread.getProgramCounter()));
-                Accumulator.setText(String.valueOf(CPUThread.getAccumulator()));
-                AccumulatorCarry.setText(String.valueOf(CPUThread.getAccumulatorCarry()));
-                InstructionRegister.setText(String.valueOf(CPUThread.getInstructionRegister()));
+                SetCPUDisplay(CPUThread);
             }
         });
 
@@ -311,10 +308,10 @@ public class MainActivity extends Activity
             super.onProgressUpdate(values);
             //Todo implement method for progress change, values 0 to 100 i suppose
 
-            ProgramCounter.setText(String.valueOf(values[0]));
-            Accumulator.setText(String.valueOf(values[1]));
+            ProgramCounter.setText(String.format("%02d",values[0]));
+            Accumulator.setText(String.format("%03d", values[1]));
             AccumulatorCarry.setText(String.valueOf(values[2]));
-            InstructionRegister.setText(String.valueOf(values[3]));
+            InstructionRegister.setText(String.format("%03d",values[3]));
 
         }
 

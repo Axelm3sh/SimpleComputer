@@ -210,10 +210,6 @@ public class MemoryCell extends Fragment
                 textView.setText(String.valueOf(returnNumCellsGenerated()));
             }
 
-            if (DEBUG) Log.d(VERBOSE, String.format("Value of EditText.getText(): %s\n" +
-                            "Value of EditText.String.valueOf(obj): %s",
-                    editText.getText(),
-                    String.valueOf(editText.getText())));
 
             /*Implement code to grab data on cell create, initialize to empty/null*/
             if (String.valueOf(editText.getText()) == null) {
@@ -224,7 +220,7 @@ public class MemoryCell extends Fragment
             else
             {//fixme? Possibly never false
                 CellData cellData = new CellData();
-                cellData.setCellData(String.valueOf(editText.getText()));
+                cellData.setCellData(String.format("%03s",editText.getText()));
                 cellData.setCellIDNumber(Integer.parseInt(textView.getText().toString()));
                 arrayData.add(cellData);
 
@@ -291,7 +287,7 @@ public class MemoryCell extends Fragment
     //Pretty expensive to re-create all the cells, use sparingly
     public void ClearAllCells()
     {
-//        scroll.removeAllViews(); //Gets rid of all child views in scroll
+        scroll.removeAllViews(); //Gets rid of all child views in scroll
 
         // Clear internal array of numbers stored
 //        arrayData.clear(); <- This gives so many out of index problems later on, screw this function
@@ -304,7 +300,7 @@ public class MemoryCell extends Fragment
             //Just make every value default to 0 so we still have our slots to work with
         }
 
-//        resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
+        resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
     }
 
     //ChangeCell, specify which location to change. if out of index bounds, create until available

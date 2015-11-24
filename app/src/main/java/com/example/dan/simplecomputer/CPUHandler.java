@@ -16,7 +16,7 @@ import java.util.List;
 public class CPUHandler extends Activity
 {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String VERBOSE = "DDP";
 
     private List<CellData> cellDataList; //Array for memory cell data
@@ -151,6 +151,27 @@ public class CPUHandler extends Activity
         *   - perform execution required by op-code, using address field of the instruction
         *   in the Instruction Register*/
 
+        //cellDataList max size = true index num + 1, location references a true index num.
+        if(cellDataList.size()-1 < memoryActor)
+        {
+            //need to make more cells to work with.
+            // difference + max size-1 = location
+            int difference = memoryActor - cellDataList.size();
+
+            for (int i = 0; i < difference+1; i++) {
+                CellData instance = new CellData();
+
+                cellDataList.add(instance);
+
+                if (DEBUG) Log.d(VERBOSE, String.format("i: %d", i));
+            }
+
+            /*At this point, our memory cells will have enough cells to accommodate the card
+            * we want to place in them*/
+
+            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, memoryActor));
+        }
+
         try {
 
             switch (instructCase) {
@@ -257,7 +278,7 @@ public class CPUHandler extends Activity
 
             //At this point cellDataList is same size as our passingData Array, start copying
             for (int i = 0; i < cellInputList.size(); i++) {
-                cellInputList.set(i-1, passingData.get(i));
+                cellInputList.set(i, passingData.get(i));
             }
         }
 
@@ -360,27 +381,6 @@ public class CPUHandler extends Activity
         //Reverse stack. Last card is first input
         CellData overwriteCell;
 
-        //cellDataList max size = true index num + 1, location references a true index num.
-        if(cellDataList.size()-1 < location)
-        {
-            //need to make more cells to work with.
-            // difference + max size-1 = location
-            int difference = location - cellDataList.size();
-
-            for (int i = 0; i < difference+1; i++) {
-                CellData instance = new CellData();
-
-                cellDataList.add(instance);
-
-                if (DEBUG) Log.d(VERBOSE, String.format("i: %d", i));
-            }
-
-            /*At this point, our memory cells will have enough cells to accommodate the card
-            * we want to place in them*/
-
-            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, location));
-        }
-
         //Check Inputlist if it's not empty and we are within valid bounds of data we have
         if (cellInputList.size() != 0 && InputIndex < cellInputList.size()) {
 
@@ -466,26 +466,6 @@ public class CPUHandler extends Activity
     {
         int number;
 
-        if(cellDataList.size()-1 < location)
-        {
-            //need to make more cells to work with.
-            // difference + max size-1 = location
-            int difference = location - cellDataList.size();
-
-            for (int i = 0; i < difference+1; i++) {
-                CellData instance = new CellData();
-
-                cellDataList.add(instance);
-
-                if (DEBUG) Log.d(VERBOSE, String.format("i: %d", i));
-            }
-
-            /*At this point, our memory cells will have enough cells to accommodate the card
-            * we want to place in them*/
-
-            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, location));
-        }
-
         number = Integer.parseInt(cellDataList.get(location).getCellData());
 
         setAccumulator(number);
@@ -495,25 +475,6 @@ public class CPUHandler extends Activity
     public void StoreAccumulator(int location) //TODO store accumulator
     {
         //Grab CellData at location, set current accumulator value into it's celldata
-        if(cellDataList.size()-1 < location)
-        {
-            //need to make more cells to work with.
-            // difference + max size-1 = location
-            int difference = location - cellDataList.size();
-
-            for (int i = 0; i < difference+1; i++) {
-                CellData instance = new CellData();
-
-                cellDataList.add(instance);
-
-                if (DEBUG) Log.d(VERBOSE, String.format("i: %d", i));
-            }
-
-            /*At this point, our memory cells will have enough cells to accommodate the card
-            * we want to place in them*/
-
-            if (DEBUG) Log.d(VERBOSE, String.format("cellDataList max size %d and Location %d", cellDataList.size()-1, location));
-        }
 
         cellDataList.get(location).setCellData(String.valueOf(getAccumulator()));
     }
