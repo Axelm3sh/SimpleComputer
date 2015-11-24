@@ -311,7 +311,7 @@ public class MainActivity extends Activity
             ProgramCounter.setText(String.format("%02d",values[0]));
             Accumulator.setText(String.format("%03d", values[1]));
             AccumulatorCarry.setText(String.valueOf(values[2]));
-            InstructionRegister.setText(String.format("%03d",values[3]));
+            InstructionRegister.setText(String.format("%03d", values[3]));
 
         }
 
@@ -443,7 +443,7 @@ public class MainActivity extends Activity
             //Building dynamic AlertDialog
             final AlertDialog.Builder builder = new AlertDialog.Builder(dialogView.getContext());
 
-            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setIcon(android.R.drawable.ic_dialog_info)
                     .setTitle("Which example would you like to try?")
                     .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener()
                     {
@@ -454,8 +454,10 @@ public class MainActivity extends Activity
 
                             switch(which) {
                                 case 0: CPUThread.LoadInputArray(PreloadData(which)); //boot load input
+                                        itemsChecked[0] = true;
                                     break;
-                                case 1: CPUThread.LoadInputArray(PreloadData(which));
+                                case 1: CPUThread.LoadMemoryArray(PreloadData(which));
+                                        itemsChecked[1] = true;
                                     break;
                                 default: CPUThread.LoadInputArray(PreloadData(0));
                             }
@@ -466,10 +468,13 @@ public class MainActivity extends Activity
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-
-                            outputCell.UpdateCells(CPUThread.getCellOutputList());
-                            inputCell.UpdateCells(CPUThread.getCellInputList());
-                            memoryCell.UpdateCells(CPUThread.getCellDataList());
+                            if(itemsChecked[0]) {
+                                inputCell.UpdateCells(CPUThread.getCellInputList());
+                            }
+                            if(itemsChecked[1])
+                            {
+                                memoryCell.UpdateCells(CPUThread.getCellDataList());
+                            }
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -525,10 +530,12 @@ public class MainActivity extends Activity
                 String data = "001,,,,,,,,,,,,,,,,,,,,804,534,035,036,435,336,732,535,434,200,534,624,110,900";
                 String[] dataSplit = data.split(",");
 
-                for (String aDataSplit : dataSplit) {
-                    if (DEBUG) Log.d(VERBOSE, String.format("%s", aDataSplit));
+                for (int i = 0; i < dataSplit.length; i++) {
+                    CellData instance = new CellData();
+                    instance.setCellIDNumber(i);
+                    instance.setCellData(dataSplit[i]);
+                    list.add(instance);
                 }
-
 
                 break;
             case 2:

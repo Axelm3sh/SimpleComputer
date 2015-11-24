@@ -245,7 +245,10 @@ public class CPUHandler extends Activity
 
             //At this point cellDataList is same size as our passingData Array, start copying
             for (int i = 0; i < cellDataList.size(); i++) {
-                cellDataList.set(i, passingData.get(i));
+
+                if(i != cellDataList.size() && i < cellInputList.size()) {
+                    cellDataList.set(i, passingData.get(i));
+                }
             }
         }
 
@@ -276,9 +279,13 @@ public class CPUHandler extends Activity
                 cellInputList.add(instance);     //instance our slots to work and write in
             }
 
+
             //At this point cellDataList is same size as our passingData Array, start copying
             for (int i = 0; i < cellInputList.size(); i++) {
-                cellInputList.set(i, passingData.get(i));
+
+                if(i != cellInputList.size() && i < cellInputList.size()) {
+                    cellInputList.set(i, passingData.get(i));
+                }
             }
         }
 

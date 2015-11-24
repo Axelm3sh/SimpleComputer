@@ -220,7 +220,7 @@ public class MemoryCell extends Fragment
             else
             {//fixme? Possibly never false
                 CellData cellData = new CellData();
-                cellData.setCellData(String.format("%03s",editText.getText()));
+                cellData.setCellData(String.valueOf(editText.getText()));
                 cellData.setCellIDNumber(Integer.parseInt(textView.getText().toString()));
                 arrayData.add(cellData);
 
