@@ -243,6 +243,44 @@ public class MainActivity extends Activity
                 intent2.putExtras(bundle2);
 
                 startActivityForResult(intent2, 2);
+
+            case 3: //BootLoad
+                String bootLoadProg = "002-600-003-200-004-501-005-601-002-401-";
+                String[] bootLoadSplit = bootLoadProg.split("-");
+
+                inputCell.ClearAllCells();
+
+                for (String aBootLoadSplit : bootLoadSplit) {
+                    inputCell.AddCell();
+                }
+
+                for (int i = 0; i < bootLoadSplit.length; i++) {
+                    inputCell.ChangeCell(i, bootLoadSplit[i]);
+                }
+                break;
+            case 4:
+                String divisionProg = "001--------------------804-534-035-036-435-336-732-535-434-200-534-624-114-900-";
+                String[] divisionSplit = divisionProg.split("-");
+
+                memoryCell.ClearAllCells();
+
+                for (int i = 0; i < divisionSplit.length; i++) {
+                    memoryCell.ChangeCell(i, divisionSplit[i]);
+                }
+
+                break;
+            case 5:
+                String shiftProg = "001--------------------035-435-813-536-435-823-810-236-536-435-831-236-536-136-900-";
+                String[] shiftProgSplit = shiftProg.split("-");
+
+                memoryCell.ClearAllCells();
+
+                for (int i = 0; i < shiftProgSplit.length; i++) {
+                    memoryCell.ChangeCell(i, shiftProgSplit[i]);
+                }
+
+                break;
+
         }
 
     }
@@ -479,6 +517,7 @@ public class MainActivity extends Activity
                         public void onClick(DialogInterface dialog, int which)
                         {
                             //todo load defaults 1 boot, 2 div, 3 shift dig using which
+                            executeItemsWhich = which;
                         }
                     })
                     .setPositiveButton("Select", new DialogInterface.OnClickListener()
@@ -486,7 +525,21 @@ public class MainActivity extends Activity
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            popToast("You selected " + executeItems[which]);
+                            popToast("You selected " + executeItems[executeItemsWhich]);
+
+                            switch (executeItemsWhich) {
+                                case 0:
+                                    DataLoader(3);
+                                    break;
+                                case 1:
+                                    DataLoader(4);
+                                    break;
+                                case 2:
+                                    DataLoader(5);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
 
                     })

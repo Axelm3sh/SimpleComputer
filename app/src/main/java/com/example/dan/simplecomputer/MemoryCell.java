@@ -230,7 +230,7 @@ public class MemoryCell extends Fragment
     //Used for singular data change
     public void ChangeCell(int location, String data)
     {
-        LinearLayout linearLayout = this.scroll;
+        LinearLayout linearLayout = scroll;
 
         if (DEBUG) Log.d(VERBOSE, String.format("ChangeCell[Layout Children count] %s",
                 String.valueOf(linearLayout.getChildCount())));
@@ -242,26 +242,27 @@ public class MemoryCell extends Fragment
             if (localLayout.getChildAt(1) instanceof EditText) //should be child edittext
             {
                 EditText text = (EditText) localLayout.getChildAt(1);
-                text.setText(data);
+                if(data.equals(""))
+                {
+                    text.setText("");
+                }
+                else
+                {
+                    text.setText(String.format("%03d",Integer.parseInt(data)));
+                }
+
                 text.getParent().requestChildFocus(text, text);
             }//LL Child
         }//LL
-        else
-        {
-            if(super.equals(getFragmentManager().findFragmentByTag("memory"))) {
-                popToastL(String.format("Memory Cell Unavailable, Add Memory %02d", location));
-            }
-            else
-            {
-                popToastL(String.format("Input Card Unavailable, Add Input %02d", location));
-            }
+        else {
+            popToastS(String.format("Memory Cell Unavailable, Add Memory %02d", location));
         }
 
     }
 
     public String GetCellData(int location)
     {
-        LinearLayout linearLayout = this.scroll;
+        LinearLayout linearLayout = scroll;
         String data = "";
 
         if (DEBUG) Log.d(VERBOSE, String.format("ChangeCell[Layout Children count] %s",
@@ -278,17 +279,9 @@ public class MemoryCell extends Fragment
                 text.getParent().requestChildFocus(text, text);
             }//LL Child
         }//LL
-        else
-        {
-            if(super.equals(getFragmentManager().findFragmentByTag("memory"))) {
-                popToastL(String.format("Memory Cell %02d Invalid Data", location));
-            }
-            else
-            {
-                popToastL(String.format("Input Card %02d Invalid", location));
-            }
+        else {
+            popToastS(String.format("Memory Cell %02d Invalid Data", location));
         }
-
         return data;
     }
 
@@ -395,7 +388,7 @@ public class MemoryCell extends Fragment
                         }
                     });
 
-            if(view.equals(view.findViewById(R.id.LinearLayoutIOCell))) {
+            if (view.equals(view.findViewById(R.id.LinearLayoutIOCell))) {
                 builder.setPositiveButton("Add Cell(s)", new DialogInterface.OnClickListener()
                 {
                     @Override
