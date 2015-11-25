@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SimpleComputer</string>
+    <string name="app_name">Simple Computer Emulator</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -17,7 +17,7 @@
     <string name="txtlbl_00">00</string>
     <string name="txtlbl_empty">EMPTY</string>
     <string name="txtlbl_ac">AC</string>
-    <string name="instructions">Simple Computer Instructions</string>
+    <string name="instructions0">Simple Computer Instructions</string>
     <string name="instructions1">Keyboard Input \nKeyboard input is allowed to cells within the Memory, Input Cards, and Program Counter (PC). \nSimply select the desired cell and type the contents.</string>
     <string name="instructions2">Moving Cell Contents \nCell contents can be moved from one cell to another by highlighting the cell, using the toolbar at the top, then selecting the target cell and pressing the clipboard to paste.</string>
     <string name="instructions3">Clearing \nA button provided at the top of the Simple Computer Emulator to allow clearing of the cells. \nClearing of the CPU will reset the Program Counter to \'00\'. \nClearing of the Input Cards resets the Input Card counter to \'01\'. Memory location \'00\' is always \'001\' by default. \nHolding Clear Button to clear all components of the Simple Computer simultaneously.</string>
@@ -25,5 +25,8 @@
     <string name="instructions5">Execution \nThe Simple Computer Emulator is a three decimal digit virtual machine. \nIt contains 100 cells of Memory (cell \'00\' through \'99\'), Input Cards, and Ouput Cards. \nThe Central Processing Unit (CPU) contains a three decimal digit accumulator (with an associated one decimal digit Carry \'Bit\'), a three decimal digit Instruction Register, and a two decimal digit Program Counter. \nInstruction Set Each instruction word is composed of a one decimal digit operation code and a two decimal digit address. The left most digit is taken to be the operation code, the right two digits are the address.</string>
     <string name="instructions6">The following is the instruction set for this emulator: \nOp-code Description \n0 _ _ Input – Copy the current input card into cell number _ _ and advance to the next card. Halt execution if the input card is empty. \n1 _ _ Output – Copy the contents of cell number _ _ to the current output card and advance to the next card. \n2 _ _ Add – Add the contents of cell number _ _ to the value of the accumulator. Sets Carry Bit on overflow. \n3 _ _ Subtract – Subtract the contents of cell number _ _ from the current value of the accumulator. Sets Carry Bit on overflow. \n4 _ _ Load Accumulator – Clear the accumulator and carry flag, then copy the contents of cell number _ _ into the accumulator. \n5 _ _ Store Accumulator – Copy the tree digits of the accumulator into cell number _ _. \n6 _ _ Jump – Place the current value of the program counter into cell 99. Next, change the value of the program counter to _ _. \n7 _ _ Test Accumulator – If the value of the accumulator is negative, change the value of the program counter to _ _. \n8 x y Shift – Shift the accumulator left x digits, then shift the result right y digits. Shift digits through the Carry Bit and enter zeros from the left and right appropriately. \n9 _ _ Halt – Replace the value of the program counter with cell number _ _ and then halt execution.</string>
     <string name="instructions7">Execution Mode Step Make sure the Program Counter is set to the correct value. \nExecution can proceed one instruction at a time by clicking the Step button in the CPU. This feature is useful when debugging. The Run button can be selected at any time during this process to allow execution to proceed normally from that point on. A message is posted at the end of execution. \nRun \nMake sure the Program counter is set to the correct value. Normal execution is initiated by clicking the Run button in the CPU. A message is posted at the end of execution.</string>
-    <string name="helpdone">Done</string>
+    <string name="btnlbl_helpdone">Done</string>
+    <string name="txtlbl_enterFileName">Enter File Name Here</string>
+    <string name="btnlbl_loadFile">Load File</string>
+    <string name="btnlbl_saveToFile">Save To File</string>
 </resources>

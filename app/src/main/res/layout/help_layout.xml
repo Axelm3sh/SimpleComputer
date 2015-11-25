@@ -20,7 +20,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/instructions"
+                android:text="@string/instructions0"
                 android:textSize="@dimen/abc_text_size_large_material"
                 android:id="@+id/textView"/>
 
@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/helpExit"
-                android:text="@string/helpdone"/>
+                android:text="@string/btnlbl_helpdone"/>
 
         </LinearLayout>
 

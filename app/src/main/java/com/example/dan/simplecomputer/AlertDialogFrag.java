@@ -9,7 +9,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 /**
- * Created by Dan on 3/11/2015.
+ * a Dialog Frag
  */
 public class AlertDialogFrag extends DialogFragment
 {
@@ -26,26 +26,6 @@ public class AlertDialogFrag extends DialogFragment
     {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        //Dynamic Edittext input snippet, can extract values ie password box
-//        final EditText input = new EditText(getActivity());
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        input.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-//        input.setLayoutParams(params);
-//        builder.setView(input); // uncomment this line
-
-        //Dynamic Number Picker Layout, can select numbers
-//        final NumberPicker np = new NumberPicker(getActivity());
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT);
-//        np.setMaxValue(100);
-//        np.setMinValue(0);
-//        np.setWrapSelectorWheel(false);
-//        np.setLayoutParams(params);
-//        builder.setView(np);
 
         builder.setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle(title)
@@ -69,17 +49,10 @@ public class AlertDialogFrag extends DialogFragment
         return builder.create();
     }
 
-//    public void onClick(View view) //Code to instantiate this dialog frag
-//    {
-//        AlertDialogFrag frag = new AlertDialogFrag();
-//        frag.setTitle("Time to go home?");
-//        frag.show(getFragmentManager(), "dialog");
-//    }
 
     public void doPositiveClick()
     {
         popToast("You clicked OK");
-
     }
 
     public void doNegativeClick()

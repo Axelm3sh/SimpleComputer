@@ -51,7 +51,7 @@ public class CPUHandler extends Activity
         setAccumulator(0);
         setAccumulatorCarry(0);
         setInstructionRegister(0);
-        setProgramCounter(0);
+        setProgramCounter("0");
         InputIndex = 0;
         ErrorEncountered = false;
         ErrFlagCode = 0;
@@ -116,7 +116,7 @@ public class CPUHandler extends Activity
             ErrorEncountered = true;
             ErrFlagCode = 2;
         }
-        setProgramCounter(getProgramCounter() + 1); //Increment PC by 1
+        setProgramCounter(String.valueOf(getProgramCounter() + 1)); //Increment PC by 1
 
         if (DEBUG) Log.d(VERBOSE, String.format("Internal %d", getProgramCounter()));
 
@@ -241,7 +241,7 @@ public class CPUHandler extends Activity
                 //Blank Input, Advance input device, set PC to 00, halt CPU
                 ErrorEncountered = true;
                 ErrFlagCode = 1;
-                setProgramCounter(0);
+                setProgramCounter("0");
                 InputIndex++;
             }
             else {
@@ -339,14 +339,14 @@ public class CPUHandler extends Activity
         //Cell 99 is at true index 98 in list
         memoryCell.ChangeCell(99, String.valueOf(getProgramCounter()));
 
-        setProgramCounter(location);
+        setProgramCounter(String.valueOf(location));
 
     }
 
     public void TestAccumulator(int location)
     {
         if (getAccumulator() < 0) {
-            setProgramCounter(location);
+            setProgramCounter(String.valueOf(location));
         }
     }
 
@@ -374,7 +374,7 @@ public class CPUHandler extends Activity
 
     public void HaltProgram(int location)
     {
-        setProgramCounter(location);
+        setProgramCounter(String.valueOf(location));
         ErrorEncountered = true;
         ErrFlagCode = 0;
     }
@@ -415,9 +415,15 @@ public class CPUHandler extends Activity
         return ProgramCounter;
     }
 
-    public void setProgramCounter(int programCounter)
+    public void setProgramCounter(String programCounter)
     {
-        ProgramCounter = programCounter;
+        if (programCounter.equals(""))
+        {
+            ProgramCounter = 0;
+        }
+        else {
+            ProgramCounter = Integer.parseInt(programCounter);
+        }
     }
 
 
