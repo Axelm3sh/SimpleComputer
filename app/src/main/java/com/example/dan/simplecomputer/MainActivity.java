@@ -225,14 +225,23 @@ public class MainActivity extends Activity
                     appendedString = appendedString.substring(0, lastDash - 1);
                 }
 
-                Intent intent = new Intent(this, FileEditorActivity.class);
-                intent.putExtra("dataString", appendedString);
+                //New intent > new Bundle > put stuff into bundle > put bundle inside intent > ship
+                Intent intent = new Intent(this.getBaseContext(), FileEditorActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("dataString", appendedString);
+                bundle.putBoolean("save", true);
+                intent.putExtras(bundle);
+
                 startActivityForResult(intent, 1);
                 break;
 
             case 2: //Loading File
-                Intent intent2 = new Intent(this, FileEditorActivity.class);
-                intent2.putExtra("dataString", appendedString);
+                Intent intent2 = new Intent(this.getBaseContext(), FileEditorActivity.class);
+                Bundle bundle2 = new Bundle();
+                bundle2.putString("dataString", appendedString);
+                bundle2.putBoolean("save", false);
+                intent2.putExtras(bundle2);
+
                 startActivityForResult(intent2, 2);
         }
 

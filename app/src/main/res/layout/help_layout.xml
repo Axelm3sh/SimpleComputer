@@ -73,7 +73,7 @@
                 android:text="@string/btnlbl_helpdone"/>
 
         </LinearLayout>
-
+<!--Todo make more pretty-->
 
     </ScrollView>
 </LinearLayout>

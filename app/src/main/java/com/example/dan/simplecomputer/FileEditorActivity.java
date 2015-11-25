@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,19 +39,36 @@ public class FileEditorActivity extends Activity
         this.dataStringBox = (TextView) findViewById(R.id.StringsAppendList);
         this.filePathbox = (EditText) findViewById(R.id.fileName);
 
-        //Grab data from our calling Intent
-        dataString = getIntent().getStringExtra("dataString");
+        //Grab a box full of goodies
+        Bundle activityBundle = getIntent().getExtras();
 
-        //Split the data and now reformat it with new lines for text box
-        dataStringSplit = dataString.split("-");
+        //Grab String from bundle
+        dataString = activityBundle.getString("dataString");
+
 
         String temp = "";
-        for (int i = 0; i < dataStringSplit.length; i++) {
-            temp = temp + String.format("[%02d] %s\n", i,dataStringSplit[i]);
+        //Split the data and now reformat it with new lines for text box
+        if (dataString != null) {
+            dataStringSplit = dataString.split("-");
+
+            for (int i = 0; i < dataStringSplit.length; i++) {
+                temp = temp + String.format("[%02d] %s\n", i, dataStringSplit[i]);
+            }
         }
 
         //Set text box to formatted data
         dataStringBox.setText(temp);
+
+        Button savebutton = (Button) findViewById(R.id.button_savefile_execute);
+        Button loadbutton = (Button) findViewById(R.id.button_loadfile_execute);
+
+        if (activityBundle.getBoolean("save")) {
+            loadbutton.setVisibility(View.INVISIBLE);
+        }
+        else {
+            savebutton.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     public void onClick(View view)
