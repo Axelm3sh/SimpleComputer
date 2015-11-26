@@ -259,7 +259,7 @@ public class MainActivity extends Activity
                 }
                 break;
             case 4:
-                String divisionProg = "001--------------------804-534-035-036-435-336-732-535-434-200-534-624-114-900-";
+                String divisionProg = "001--------------------804-534-035-036-435-336-732-535-434-200-534-624-134-900-";
                 String[] divisionSplit = divisionProg.split("-");
 
                 memoryCell.ClearAllCells();
@@ -389,6 +389,9 @@ public class MainActivity extends Activity
             Accumulator.setText(String.format("%03d", values[1]));
             AccumulatorCarry.setText(String.valueOf(values[2]));
             InstructionRegister.setText(String.format("%03d", values[3]));
+
+            CPUThread.setAccumulator(Integer.parseInt(Accumulator.getText().toString()));
+            CPUThread.setAccumulatorCarry(Integer.parseInt(AccumulatorCarry.getText().toString()));
 
             if (DEBUG) Log.d(VERBOSE, String.format("Progress Update %d", values[0]));
 

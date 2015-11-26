@@ -268,8 +268,8 @@ public class CPUHandler extends Activity
 
         int numAdd;
 
-        if(!outputCell.GetCellData(location).equals("")) {
-            numAdd = Integer.parseInt(outputCell.GetCellData(location));
+        if(!memoryCell.GetCellData(location).equals("")) {
+            numAdd = Integer.parseInt(memoryCell.GetCellData(location));
         }
         else
         {
@@ -278,7 +278,7 @@ public class CPUHandler extends Activity
             ErrorEncountered = true;
         }
 
-        Accumulator = this.Accumulator + numAdd;
+        Accumulator = Accumulator + numAdd;
         if (Accumulator <= 1000) {
             AccumulatorCarry++;
             Accumulator = -1000 + numAdd;
@@ -291,8 +291,8 @@ public class CPUHandler extends Activity
 
         int numSub;
 
-        if(!outputCell.GetCellData(location).equals("")) {
-            numSub = Integer.parseInt(outputCell.GetCellData(location));
+        if(!memoryCell.GetCellData(location).equals("")) {
+            numSub = Integer.parseInt(memoryCell.GetCellData(location));
         }
         else
         {
@@ -301,7 +301,7 @@ public class CPUHandler extends Activity
             ErrorEncountered = true;
         }
 
-        Accumulator = this.Accumulator - numSub;
+        Accumulator = Accumulator - numSub;
         if (Accumulator >= -1000) {
             AccumulatorCarry++;
             Accumulator = 1000 - numSub;
@@ -314,8 +314,8 @@ public class CPUHandler extends Activity
     {
         int number;
 
-        if(!outputCell.GetCellData(location).equals("")) {
-            number = Integer.parseInt(outputCell.GetCellData(location));
+        if(!memoryCell.GetCellData(location).equals("")) {
+            number = Integer.parseInt(memoryCell.GetCellData(location));
         }
         else
         {
