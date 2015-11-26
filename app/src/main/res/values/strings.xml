@@ -28,7 +28,7 @@
         \nTapping the button will bring up a Multi-Choice list of what you want to clear.
         \nClearing of the CPU will reset the Program Counter to \'00\'.
         \nClearing of the Input Cards resets the Input Card counter to \'01\'. Memory location \'00\' is always \'001\' by default.
-        \nHolding the Clear Button to clear all components of the Simple Computer simultaneously.</string>
+        \nHolding the Clear Button to clear all components of the Simple Computer simultaneously and Force Halt of Program if caught in an Infinite Loop.</string>
     <string name="instructions4">The Simple Computer Emulator is a three decimal digit virtual machine.
         \nIt contains 100 cells of Memory (cell \'00\' through \'99\'), Input Cards, and Ouput Cards.
         \nThe Central Processing Unit (CPU) contains a three decimal digit accumulator (with an associated one decimal digit Carry \'Bit\'), a three decimal digit Instruction Register, and a two decimal digit Program Counter.

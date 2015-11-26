@@ -14,7 +14,7 @@ import java.util.List;
 public class CPUHandler extends Activity
 {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String VERBOSE = "DDP";
 
     MemoryCell memoryCell, inputCell, outputCell;
@@ -155,10 +155,10 @@ public class CPUHandler extends Activity
                 case 1:
                     SendToOutputCard(memoryActor);
                     break;
-                case 3:
+                case 2:
                     AddAccumulator(memoryActor);
                     break;
-                case 2:
+                case 3:
                     SubtractAccumulator(memoryActor);
                     break;
                 case 4:
@@ -193,6 +193,7 @@ public class CPUHandler extends Activity
             ErrFlagCode = -1;
             //unexpected error
         }
+
     }
 
 
@@ -278,10 +279,10 @@ public class CPUHandler extends Activity
             ErrorEncountered = true;
         }
 
-        Accumulator = Accumulator + numAdd;
-        if (Accumulator >= 1000) {
+        setAccumulator(getAccumulator() + numAdd);
+        if (getAccumulator() >= 1000) {
             AccumulatorCarry++;
-            Accumulator = -1000 + numAdd;
+            setAccumulator(-1000 + numAdd);
         }
     }
 
@@ -301,10 +302,10 @@ public class CPUHandler extends Activity
             ErrorEncountered = true;
         }
 
-        Accumulator = Accumulator - numSub;
-        if (Accumulator <= -1000) {
+        setAccumulator(getAccumulator() - numSub);
+        if (getAccumulator() <= -1000) {
             AccumulatorCarry++;
-            Accumulator = 1000 - numSub;
+            setAccumulator(1000 - numSub);
         }
     }
 
@@ -336,6 +337,7 @@ public class CPUHandler extends Activity
         }
     }
 
+    //OPCODE 6
     public void JumpTo(int location)
     {
         //Cell 99 is at true index 98 in list
@@ -345,6 +347,7 @@ public class CPUHandler extends Activity
 
     }
 
+    //OPCODE 7
     public void TestAccumulator(int location)
     {
         if (getAccumulator() < 0) {
@@ -352,6 +355,7 @@ public class CPUHandler extends Activity
         }
     }
 
+    //OPCODE 8
     public void ShiftAccumulator(int location)
     {
         //000000000xxx000000000
@@ -374,6 +378,7 @@ public class CPUHandler extends Activity
 
     }
 
+    //OPCODE 9
     public void HaltProgram(int location)
     {
         setProgramCounter(String.valueOf(location));

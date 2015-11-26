@@ -22,7 +22,7 @@ public class MainActivity extends Activity
 {
 
     //CONSTANTS
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String VERBOSE = "DDP";
 
     //Classes
@@ -131,7 +131,6 @@ public class MainActivity extends Activity
                     CPUThread.CallStepTime();
                     SetCPUDisplay(CPUThread);
                 }
-
             }
         });
 
@@ -321,7 +320,7 @@ public class MainActivity extends Activity
     }
 
     //INNER CLASS ComputeTask, Asynchronous Background task, Handles Calculations on CPUThread
-    private class ComputeTask extends AsyncTask<CPUHandler, Integer, CPUHandler>
+    private class ComputeTask extends AsyncTask<CPUHandler, CPUHandler, CPUHandler>
     {
 
         @Override
@@ -339,10 +338,8 @@ public class MainActivity extends Activity
                         {
                             //stuff that updates ui
                             CPUThread.CallStepTime();
+                            publishProgress(CPUThread);
 
-                            publishProgress(CPUThread.getProgramCounter(),
-                                    CPUThread.getAccumulator(), CPUThread.getAccumulatorCarry(),
-                                    CPUThread.getInstructionRegister());
                         }
                     });
 
@@ -383,20 +380,12 @@ public class MainActivity extends Activity
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values)
+        protected void onProgressUpdate(CPUHandler... values)
         {
             super.onProgressUpdate(values);
             //Todo implement method for progress change, values 0 to 100 i suppose
 
-            ProgramCounter.setText(String.format("%02d", values[0]));
-            Accumulator.setText(String.format("%03d", values[1]));
-            AccumulatorCarry.setText(String.valueOf(values[2]));
-            InstructionRegister.setText(String.format("%03d", values[3]));
-
-            CPUThread.setAccumulator(Integer.parseInt(Accumulator.getText().toString()));
-            CPUThread.setAccumulatorCarry(Integer.parseInt(AccumulatorCarry.getText().toString()));
-
-            if (DEBUG) Log.d(VERBOSE, String.format("Progress Update %d", values[0]));
+            SetCPUDisplay(values[0]);
 
         }
 
@@ -412,6 +401,8 @@ public class MainActivity extends Activity
         protected void onCancelled(CPUHandler cpuHandler)
         {
             super.onCancelled(cpuHandler);
+
+            popToast("FORCING CPU HALT");
         }
     }
 
