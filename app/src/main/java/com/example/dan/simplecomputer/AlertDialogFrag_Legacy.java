@@ -11,7 +11,8 @@ import android.widget.Toast;
 /**
  * a Dialog Frag
  */
-public class AlertDialogFrag extends DialogFragment
+@Deprecated
+public class AlertDialogFrag_Legacy extends DialogFragment
 {
     String title = "";
 

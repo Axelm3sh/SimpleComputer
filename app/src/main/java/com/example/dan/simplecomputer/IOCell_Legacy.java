@@ -22,6 +22,7 @@ import android.widget.Toast;
  * Strictly handles GUI IO Cells and their functionality, internal data will be handled
  * by CellData Class
  */
+@Deprecated
 public class IOCell_Legacy extends Fragment
 {
     //Declare the variables to be used in GUI interface

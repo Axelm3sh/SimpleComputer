@@ -5,6 +5,7 @@ package com.example.dan.simplecomputer;
  * Simple Class object that stores data from cells into data
  *
  */
+@Deprecated
 public class CellData_Legacy
 {
     private int cellIDNumber;
