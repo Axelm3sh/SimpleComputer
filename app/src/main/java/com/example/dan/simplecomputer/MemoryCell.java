@@ -242,14 +242,12 @@ public class MemoryCell extends Fragment
             if (localLayout.getChildAt(1) instanceof EditText) //should be child edittext
             {
                 EditText text = (EditText) localLayout.getChildAt(1);
-                if (location != 0) { //Dont edit 00
                     if (data.equals("")) { //Don't give null pointer error
                         text.setText("");
                     }
                     else {
                         text.setText(String.format("%03d", Integer.parseInt(data)));
                     }
-                }
                 text.getParent().requestChildFocus(text, text);
             }//LL Child
         }//LL

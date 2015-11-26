@@ -331,7 +331,9 @@ public class CPUHandler extends Activity
     public void StoreAccumulator(int location) //TODO store accumulator
     {
         //Grab Data at location, set current accumulator value into it's data
-        memoryCell.ChangeCell(location, String.valueOf(getAccumulator()));
+        if (location != 0) { //Dont edit 00
+            memoryCell.ChangeCell(location, String.valueOf(getAccumulator()));
+        }
     }
 
     public void JumpTo(int location)
