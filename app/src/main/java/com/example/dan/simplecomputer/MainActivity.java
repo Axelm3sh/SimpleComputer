@@ -163,21 +163,17 @@ public class MainActivity extends Activity
         SetCPUDisplay(CPUThread); //Initialize CPU GUI Text
 
         //Program Counter Listener - listen for changes to the value
-        ProgramCounter.addTextChangedListener(new TextWatcher()
-        {
+        ProgramCounter.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
-            {//empty
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {//empty
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {//empty
+            public void onTextChanged(CharSequence s, int start, int before, int count) {//empty
             }
 
             @Override
-            public void afterTextChanged(Editable s)
-            {
+            public void afterTextChanged(Editable s) {
                 String temp;
 
                 temp = s.toString();
@@ -200,7 +196,9 @@ public class MainActivity extends Activity
     private void ClearCPUDisplay()
     {
 
-        newAsyncTask.cancel(true);
+        if(newAsyncTask != null) {
+            newAsyncTask.cancel(false);
+        }
 
         CPUThread.ClearCPU(); //Clears internal
         SetCPUDisplay(CPUThread); //Resets display GUI
