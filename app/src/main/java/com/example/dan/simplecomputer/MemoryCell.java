@@ -216,7 +216,7 @@ public class MemoryCell extends Fragment
         scroll.removeAllViews(); //Gets rid of all child views in scroll
 
         // Clear internal array of numbers stored
-//        arrayData.clear(); //<- This gives so many out of index problems later on, screw this function
+        //arrayData.clear(); //<- This gives so many out of index problems later on, screw this function
         resetNumCellCounter(); //Reset internal counter because we are rebuilding new list anyways
 
         if (this.equals(getFragmentManager().findFragmentByTag("memory"))) {
@@ -340,7 +340,7 @@ public class MemoryCell extends Fragment
             //Building dynamic AlertDialog
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 
-//              Dynamic Number Picker Layout, can select numbers
+//          Dynamic Number Picker Layout, can select numbers
             final NumberPicker np = new NumberPicker(getActivity());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,

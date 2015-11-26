@@ -49,7 +49,6 @@ public class AlertDialogFrag extends DialogFragment
         return builder.create();
     }
 
-
     public void doPositiveClick()
     {
         popToast("You clicked OK");

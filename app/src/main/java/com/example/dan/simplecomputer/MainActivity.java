@@ -75,7 +75,6 @@ public class MainActivity extends Activity
             @Override
             public boolean onLongClick(View v)
             {
-
                 //Clears Only CPU memory
                 ClearCPUDisplay();
 
@@ -96,7 +95,6 @@ public class MainActivity extends Activity
             public void onClick(View v)
             {
                 if (DEBUG) Log.d(VERBOSE, "Running Program - RUN_HIT_FLAG");
-                if (DEBUG) Log.d(VERBOSE, String.format("CPUThread before Async is %s", CPUThread));
 
                 //Get current Value of PC counter before we start operation
                 CPUThread.setProgramCounter(ProgramCounter.getText().toString());
@@ -104,7 +102,7 @@ public class MainActivity extends Activity
                 newAsyncTask = new ComputeTask();
                 newAsyncTask.execute(CPUThread);
 
-                if (DEBUG) Log.d(VERBOSE, String.format("CPUThread after Async is %s", CPUThread));
+
             }
         });
         runButton.setOnLongClickListener(new View.OnLongClickListener()
@@ -137,9 +135,9 @@ public class MainActivity extends Activity
 
     }
 
-    /*************
+    /********************************
      * image button/menu click event
-     *********************/
+     ********************************/
     public void onClick(View view)
     {
         startActivity(new Intent(this, HelpActivity.class));
@@ -180,7 +178,6 @@ public class MainActivity extends Activity
                 CPUThread.setProgramCounter(temp);
             }
         });
-
     }
 
     //Change on screen display of CPU text, GUI-only function, does not change internal CPU
@@ -213,6 +210,7 @@ public class MainActivity extends Activity
     {
         String appendedString = "";
 
+        //DataLoader Switch, Choose from Save, Load, Templates
         switch (choice) {
             case 1: //Saving File
 
@@ -220,6 +218,7 @@ public class MainActivity extends Activity
                 for (int i = 0; i < memoryCell.returnNumCellsGenerated(); i++) {
                     appendedString = appendedString + String.format("%s-", memoryCell.GetCellData(i));
                 }
+                //Truncate Last Dash
                 int lastDash = appendedString.lastIndexOf("-");
                 if (lastDash != -1) {
                     appendedString = appendedString.substring(0, lastDash - 1);
@@ -278,9 +277,7 @@ public class MainActivity extends Activity
                 for (int i = 0; i < shiftProgSplit.length; i++) {
                     memoryCell.ChangeCell(i, shiftProgSplit[i]);
                 }
-
                 break;
-
         }
 
     }
@@ -337,7 +334,6 @@ public class MainActivity extends Activity
                             //stuff that updates ui
                             CPUThread.CallStepTime();
                             publishProgress(CPUThread);
-
                         }
                     });
 
@@ -565,8 +561,7 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -580,13 +575,9 @@ public class MainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    //Todo create a File Read in, can use this as template too
-
-
     private void popToast(String text)
     {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }//popToast
-
 
 }

@@ -2,10 +2,6 @@ package com.example.dan.simplecomputer;
 
 import android.app.Activity;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
-
-import java.util.List;
 
 /**
  * CPU Emulator
@@ -41,7 +37,6 @@ public class CPUHandler extends Activity
         this.memoryCell = memory;
         this.inputCell = input;
         this.outputCell = output;
-
         // Data will be generated after calling Step-time
     }
 
@@ -55,8 +50,6 @@ public class CPUHandler extends Activity
         InputIndex = 0;
         ErrorEncountered = false;
         ErrFlagCode = 0;
-
-//        cellOutputList.clear();
     }
 
     public boolean CheckError()
@@ -193,39 +186,7 @@ public class CPUHandler extends Activity
             ErrFlagCode = -1;
             //unexpected error
         }
-
     }
-
-
-    //Compare Arrays before we do anything, other functions will handle the size problem
-    private int TestArrayInequality(List firstArray, List secondArray)
-    {
-        int code;
-
-        if (firstArray.size() < secondArray.size()) {
-            code = 1; //first array is smaller
-
-            if (firstArray.isEmpty()) //Test if first array empty
-            {
-                code = 2;
-            }
-
-        }
-        else if (firstArray.size() > secondArray.size()) {
-            code = -1; //second array is smaller
-
-            if (secondArray.isEmpty()) //Test if second array empty
-            {
-                code = -2;
-            }
-        }
-        else {
-            code = 0; //Equal array sizes
-        }
-
-        return code;
-    }
-
 
 /* OP CODE LOGIC FUNCTIONS
 *       SECTION CONTAINS OP CODE LOGIC FOR INTERPRET STEP*/
@@ -432,22 +393,5 @@ public class CPUHandler extends Activity
             ProgramCounter = Integer.parseInt(programCounter);
         }
     }
-
-
-    private void popToastS(String text)
-    {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.BOTTOM, 0, 70);
-        toast.show();
-    } //popToastS Advanced
-
-
-    private void popToastL(String text)
-    {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.BOTTOM, 0, 90);
-        toast.show();
-    } //popToastL - long
-
 }
 

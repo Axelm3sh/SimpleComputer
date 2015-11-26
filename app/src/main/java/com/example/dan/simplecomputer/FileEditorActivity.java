@@ -59,6 +59,7 @@ public class FileEditorActivity extends Activity
         //Set text box to formatted data
         dataStringBox.setText(temp);
 
+        //Our Flags from bundle will dictate button layout
         Button savebutton = (Button) findViewById(R.id.button_savefile_execute);
         Button loadbutton = (Button) findViewById(R.id.button_loadfile_execute);
 
@@ -71,6 +72,7 @@ public class FileEditorActivity extends Activity
 
     }
 
+    //Advanced URI Parse code for file read and write
     public void onClick(View view)
     {
         switch (view.getId()) {
