@@ -279,7 +279,7 @@ public class CPUHandler extends Activity
         }
 
         Accumulator = Accumulator + numAdd;
-        if (Accumulator <= 1000) {
+        if (Accumulator >= 1000) {
             AccumulatorCarry++;
             Accumulator = -1000 + numAdd;
         }
@@ -302,7 +302,7 @@ public class CPUHandler extends Activity
         }
 
         Accumulator = Accumulator - numSub;
-        if (Accumulator >= -1000) {
+        if (Accumulator <= -1000) {
             AccumulatorCarry++;
             Accumulator = 1000 - numSub;
         }

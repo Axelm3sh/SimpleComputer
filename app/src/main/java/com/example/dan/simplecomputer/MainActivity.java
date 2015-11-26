@@ -200,6 +200,9 @@ public class MainActivity extends Activity
     //CPU internal data and display clear method
     private void ClearCPUDisplay()
     {
+
+        newAsyncTask.cancel(true);
+
         CPUThread.ClearCPU(); //Clears internal
         SetCPUDisplay(CPUThread); //Resets display GUI
 
@@ -401,6 +404,8 @@ public class MainActivity extends Activity
         protected void onCancelled()
         {
             super.onCancelled();
+
+            popToast("FORCING CPU HALT");
         }
 
         @Override
